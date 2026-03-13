@@ -4,14 +4,11 @@
 
 {% block extra_css %}
 <style>
-    /* 设置页面容器 */
     .settings-container {
-        /* max-width: 1200px; */
         margin: 0 auto;
         padding: 1rem;
     }
 
-    /* 设置页面标题 */
     .settings-title {
         font-size: 2rem;
         font-weight: 700;
@@ -25,7 +22,6 @@
         margin-bottom: 2rem;
     }
 
-    /* 标签页导航 */
     .settings-tabs {
         background: white;
         border-radius: 16px;
@@ -62,7 +58,6 @@
         margin-right: 0.5rem;
     }
 
-    /* 设置卡片 */
     .settings-card {
         background: white;
         border-radius: 16px;
@@ -87,7 +82,6 @@
         padding: 2rem;
     }
 
-    /* 子标签页 */
     .sub-tabs {
         background: #f8f9fa;
         border-radius: 12px;
@@ -120,7 +114,6 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
-    /* 表单元素 */
     .settings-card .form-label {
         font-weight: 600;
         color: #2c3e50;
@@ -147,7 +140,6 @@
         margin-top: 0.5rem;
     }
 
-    /* 提示框 */
     .settings-card .alert {
         border-radius: 12px;
         border: none;
@@ -173,7 +165,6 @@
         margin-bottom: 0;
     }
 
-    /* 按钮 */
     .settings-card .btn {
         border-radius: 8px;
         padding: 0.75rem 2rem;
@@ -202,7 +193,6 @@
         border-color: #d0d0d0;
     }
 
-    /* 响应式设计 */
     @media (max-width: 768px) {
         .settings-container {
             padding: 1rem;
@@ -230,7 +220,6 @@
 
 {% block content %}
 <div class="settings-container">
-    <!-- 面包屑导航 -->
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/" class="text-decoration-none">首页</a></li>
@@ -238,48 +227,13 @@
         </ol>
     </nav>
 
-    <!-- 页面标题 -->
     <h1 class="settings-title">
         <i class="bi bi-gear me-2"></i> 系统设置
     </h1>
-    <!-- <p class="settings-subtitle">配置模型、提示词和检索参数</p> -->
     <p class="settings-subtitle">配置检索参数</p>
 
-    <!-- 设置表单 -->
     <form id="settingsForm" onsubmit="saveSettings(event)">
-        <!-- 标签页导航 -->
-        <!-- <div class="settings-tabs">
-            <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="embedding-tab" data-bs-toggle="tab" data-bs-target="#embedding"
-                        type="button" role="tab">
-                        <i class="bi bi-diagram-3"></i> 向量嵌入模型
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="llm-tab" data-bs-toggle="tab" data-bs-target="#llm" type="button"
-                        role="tab">
-                        <i class="bi bi-robot"></i> 大语言模型
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="prompt-tab" data-bs-toggle="tab" data-bs-target="#prompt" type="button"
-                        role="tab">
-                        <i class="bi bi-chat-quote"></i> 提示词设置
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="retrieval-tab" data-bs-toggle="tab" data-bs-target="#retrieval"
-                        type="button" role="tab">
-                        <i class="bi bi-search"></i> 检索设置
-                    </button>
-                </li>
-            </ul>
-        </div> -->
-
-        <!-- 标签页内容 -->
         <div class="tab-content" id="settingsTabContent">
-            <!-- 标签1: 向量嵌入模型 -->
             <div class="tab-pane fade" id="embedding" role="tabpanel">
                 <div class="card settings-card">
                     <div class="card-header">
@@ -301,7 +255,6 @@
                             <label class="form-label">模型名称</label>
                             <select class="form-select" id="embeddingModelName" name="embedding_model_name">
                                 <option value="">请选择模型</option>
-                                <!-- 动态填充 -->
                             </select>
                             <div class="form-text">选择模型名称或路径</div>
                         </div>
@@ -323,7 +276,6 @@
                 </div>
             </div>
 
-            <!-- 标签2: 大语言模型 -->
             <div class="tab-pane fade" id="llm" role="tabpanel">
                 <div class="card settings-card">
                     <div class="card-header">
@@ -345,7 +297,6 @@
                             <label class="form-label">模型名称</label>
                             <select class="form-select" id="llmModelName" name="llm_model_name">
                                 <option value="1" selected>请选择模型</option>
-                                <!-- 动态填充 -->
                             </select>
                             <div class="form-text">选择模型名称</div>
                         </div>
@@ -374,14 +325,12 @@
                 </div>
             </div>
 
-            <!-- 标签3: 提示词设置 -->
             <div class="tab-pane fade" id="prompt" role="tabpanel">
                 <div class="card settings-card">
                     <div class="card-header">
                         <h5 class="mb-0"><i class="bi bi-chat-quote me-2"></i> 提示词设置</h5>
                     </div>
                     <div class="card-body">
-                        <!-- 子标签页导航 -->
                         <div class="sub-tabs">
                             <ul class="nav nav-tabs" id="promptSubTabs" role="tablist">
                                 <li class="nav-item" role="presentation">
@@ -399,9 +348,7 @@
                             </ul>
                         </div>
 
-                        <!-- 子标签页内容 -->
                         <div class="tab-content" id="promptSubTabContent">
-                            <!-- 子标签1: 普通聊天提示词 -->
                             <div class="tab-pane fade show active" id="chat-prompt-sub" role="tabpanel">
                                 <div class="mb-4">
                                     <label class="form-label">普通聊天系统提示词</label>
@@ -414,7 +361,6 @@
                                 </div>
                             </div>
 
-                            <!-- 子标签2: 知识库聊天提示词 -->
                             <div class="tab-pane fade" id="rag-prompt-sub" role="tabpanel">
                                 <div class="mb-4">
                                     <label class="form-label">知识库聊天系统提示词</label>
@@ -449,7 +395,6 @@
                 </div>
             </div>
 
-            <!-- 标签4: 检索设置 -->
             <div class="tab-pane fade show active" id="retrieval" role="tabpanel">
                 <div class="card settings-card">
                     <div class="card-header">
@@ -508,7 +453,6 @@
             </div>
         </div>
 
-        <!-- 操作按钮 -->
         <div class="d-flex justify-content-end gap-3 mt-4">
             <button type="button" class="btn btn-secondary" onclick="resetSettings()">
                 <i class="bi bi-arrow-counterclockwise me-2"></i> 重置
@@ -529,7 +473,6 @@
         const modelSelect = document.getElementById('embeddingModelName')
         const apiKeyGroup = document.getElementById('embeddingApiKeyGroup')
         const baseUrlGroup = document.getElementById('embeddingBaseUrlGroup')
-        //先记住当前选中的模型
         const currentValue = modelSelect.value
         modelSelect.innerHTML = '<option value="">请选择模型</options>'
         if (availableModels && availableModels.embedding_models[provider]) {
@@ -542,7 +485,6 @@
                 option.textContent = displayText
                 modelSelect.appendChild(option)
             })
-            //恢复刷新前选中的值
             if (currentValue) {
                 const optionExists = Array.from(modelSelect.options).some(opt => opt.value === currentValue)
                 if (optionExists) {
@@ -566,7 +508,6 @@
         const modelSelect = document.getElementById('llmModelName')
         const apiKeyGroup = document.getElementById('llmApiKeyGroup')
         const baseUrlGroup = document.getElementById('llmBaseUrlGroup')
-        //先记住当前选中的模型
         const currentValue = modelSelect.value
         modelSelect.innerHTML = '<option value="">请选择模型</options>'
         if (availableModels && availableModels.llm_models[provider]) {
@@ -589,7 +530,6 @@
             } else {
                 baseUrlGroup.style.display = 'none'
             }
-            //恢复刷新前选中的值
             if (currentValue) {
                 const optionExists = Array.from(modelSelect.options).some(opt => opt.value === currentValue)
                 if (optionExists) {
@@ -599,17 +539,15 @@
         }
     }
     function loadSettings(settings) {
-        // 向量嵌入模型：先设置提供商和模型名称，然后更新表单
         document.getElementById('embeddingProvider').value = settings.embedding_provider
         document.getElementById('embeddingModelName').value = settings.embedding_model_name || ''
-        updateEmbeddingForm() // 更新模型列表和显示/隐藏字段（会尝试恢复之前的值）
+        updateEmbeddingForm()
         document.getElementById('embeddingApiKey').value = settings.embedding_api_key || ''
         document.getElementById('embeddingBaseUrl').value = settings.embedding_base_url || ''
 
-        // 大语言模型：先设置提供商和模型名称，然后更新表单
         document.getElementById('llmProvider').value = settings.llm_provider
         document.getElementById('llmModelName').value = settings.llm_model_name || ''
-        updateLLMForm() // 更新模型列表和显示/隐藏字段（会尝试恢复之前的值）
+        updateLLMForm()
         document.getElementById('llmApiKey').value = settings.llm_api_key || ''
         document.getElementById('llmBaseUrl').value = settings.llm_base_url || ''
         document.getElementById('llmTemperature').value = settings.llm_temperature || '0.7'
@@ -623,7 +561,7 @@
         document.getElementById('keywordThreshold').value = settings.keyword_threshold || '0.5'
         document.getElementById('vectorWeight').value = settings.vector_weight || '0.7'
         document.getElementById('topK').value = settings.top_k || '5'
-        updateRetrievalForm() // 更新检索模式的显示/隐藏
+        updateRetrievalForm()
     }
     document.addEventListener('DOMContentLoaded', async function () {
         try {
@@ -715,17 +653,14 @@
         const vectorWeightGroup = document.getElementById('vectorWeightGroup')
 
         if (retrievalMode === 'vector') {
-            // 向量检索：只显示向量检索阈值
             vectorThresholdGroup.style.display = 'block'
             keywordThresholdGroup.style.display = 'none'
             vectorWeightGroup.style.display = 'none'
         } else if (retrievalMode === 'keyword') {
-            // 全文检索：只显示全文检索阈值
             vectorThresholdGroup.style.display = 'none'
             keywordThresholdGroup.style.display = 'block'
             vectorWeightGroup.style.display = 'none'
         } else if (retrievalMode === 'hybrid') {
-            // 混合检索：显示向量检索阈值、全文检索阈值和向量检索权重
             vectorThresholdGroup.style.display = 'block'
             keywordThresholdGroup.style.display = 'block'
             vectorWeightGroup.style.display = 'block'

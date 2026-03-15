@@ -1,0 +1,121 @@
+{% extends "safety_module_base.html" %}
+
+{% block title %}统计分析看板 - 电气安全知识智能问答服务软件{% endblock %}
+{% block header_title %}统计分析看板{% endblock %}
+{% block header_actions %}
+<button class="btn btn-outline-primary">
+    <i class="bi bi-download"></i>
+    <span>导出月报</span>
+</button>
+{% endblock %}
+
+{% block module_content %}
+<section class="module-hero">
+    <div class="module-hero-top">
+        <div>
+            <span class="module-kicker"><i class="bi bi-graph-up-arrow"></i> 决策分析</span>
+            <h1 class="module-title">面向电气安全运营的综合数据看板</h1>
+            <p class="module-subtitle">
+                汇总问答服务、知识引用、隐患整改、培训考试等多模块数据，为安全管理人员提供趋势判断和重点提醒。
+            </p>
+        </div>
+        <span class="prototype-pill"><i class="bi bi-display"></i> 运营分析</span>
+    </div>
+    <div class="hero-metrics">
+        {% for item in kpis %}
+        <div class="hero-metric">
+            <div class="metric-label">{{ item.label }}</div>
+            <div class="metric-value">{{ item.value }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<div class="trend-grid">
+    {% for item in kpis %}
+    <article class="trend-card">
+        <div class="trend-card-value">{{ item.value }}</div>
+        <div class="trend-card-label">{{ item.label }}</div>
+        <div class="trend-card-delta">{{ item.trend }}</div>
+    </article>
+    {% endfor %}
+</div>
+
+<div class="module-grid">
+    <section class="panel-card">
+        <div class="panel-head">
+            <div>
+                <div class="panel-title">月度趋势</div>
+                <div class="panel-subtitle">示意问答调用量与平台活跃度变化</div>
+            </div>
+            <span class="badge-soft blue"><i class="bi bi-calendar3"></i> 近 7 月</span>
+        </div>
+        <div class="panel-body">
+            <div class="bar-list">
+                {% for value in monthly %}
+                <div class="bar-row">
+                    <span>{{ loop.index }} 月</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: {{ (value / 110 * 100)|round(0, 'ceil') }}%;"></div>
+                    </div>
+                    <strong>{{ value }}</strong>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <div class="card-list">
+        <section class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <div class="panel-title">热门问题主题</div>
+                    <div class="panel-subtitle">高频提问反映当前一线关注点</div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="bar-list">
+                    {% for topic, score in hot_topics %}
+                    <div class="bar-row">
+                        <span>{{ topic }}</span>
+                        <div class="bar-track"><div class="bar-fill" style="width: {{ (score / 140 * 100)|round(0, 'ceil') }}%;"></div></div>
+                        <strong>{{ score }}</strong>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <div class="panel-title">部门安全评分</div>
+                    <div class="panel-subtitle">展示部门安全评分对比视图</div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="card-list">
+                    {% for item in dept_scores %}
+                    <article class="mini-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="mini-card-title">{{ item.name }}</div>
+                            {% if item.risk == "高" %}
+                            <span class="badge-soft red">{{ item.risk }}风险</span>
+                            {% elif item.risk == "中" %}
+                            <span class="badge-soft amber">{{ item.risk }}风险</span>
+                            {% else %}
+                            <span class="badge-soft green">{{ item.risk }}风险</span>
+                            {% endif %}
+                        </div>
+                        <div class="bar-track" style="margin-top: 0.9rem;">
+                            <div class="bar-fill" style="width: {{ item.score }}%;"></div>
+                        </div>
+                        <div class="mini-card-text">综合评分 {{ item.score }}，可由隐患闭环率、培训成绩、问答活跃度和案例命中率共同计算。</div>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

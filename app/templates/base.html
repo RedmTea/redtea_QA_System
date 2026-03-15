@@ -648,9 +648,45 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'chat.chat' %}active{% endif %}" href="/chat">
+                        <a class="nav-link {% if request.endpoint == 'chat.chat_view' %}active{% endif %}" href="/chat">
                             <i class="bi bi-chat-dots"></i>
                             <span>智能问答</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint and request.endpoint.startswith('safety.') %}active{% endif %}" href="/safety">
+                            <i class="bi bi-grid-1x2"></i>
+                            <span>安全业务</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'safety.regulations' %}active{% endif %}" href="/safety/regulations">
+                            <i class="bi bi-journal-text"></i>
+                            <span>法规标准</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'safety.hazards' %}active{% endif %}" href="/safety/hazards">
+                            <i class="bi bi-shield-exclamation"></i>
+                            <span>隐患整改</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'safety.cases' %}active{% endif %}" href="/safety/cases">
+                            <i class="bi bi-journal-richtext"></i>
+                            <span>事故案例</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'safety.training' %}active{% endif %}" href="/safety/training">
+                            <i class="bi bi-mortarboard"></i>
+                            <span>培训考试</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'safety.dashboard' %}active{% endif %}" href="/safety/dashboard">
+                            <i class="bi bi-bar-chart"></i>
+                            <span>统计看板</span>
                         </a>
                     </li>
                     <li class="nav-item">

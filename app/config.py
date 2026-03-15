@@ -62,7 +62,7 @@ class Config:
 
     DEEPSEEK_CHAT_MODEL = os.environ.get("DEEPSEEK_CHAT_MODEL", "deepseek-chat")
     DEEPSEEK_API_KEY = os.environ.get(
-        "DEEPSEEK_API_KEY", ""
+        "DEEPSEEK_API_KEY", "sk-08bd9e0f42064fe1bd54ae0e7abfc7e5"
     )
     DEEPSEEK_BASE_URL = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
 

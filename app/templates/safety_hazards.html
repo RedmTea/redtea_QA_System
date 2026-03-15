@@ -1,0 +1,189 @@
+{% extends "safety_module_base.html" %}
+
+{% block title %}隐患排查与整改 - 电气安全知识智能问答服务软件{% endblock %}
+{% block header_title %}隐患排查与整改{% endblock %}
+{% block header_actions %}
+<button class="btn btn-primary">
+    <i class="bi bi-plus-circle"></i>
+    <span>新建隐患工单</span>
+</button>
+{% endblock %}
+
+{% block module_content %}
+<section class="module-hero">
+    <div class="module-hero-top">
+        <div>
+            <span class="module-kicker"><i class="bi bi-shield-exclamation"></i> 闭环治理</span>
+            <h1 class="module-title">现场隐患从上报到销项的全过程管理</h1>
+            <p class="module-subtitle">
+                页面围绕“发现、分级、整改、复查、归档”构建完整闭环，可用于展示责任落实、整改时限和风险消减过程。
+            </p>
+        </div>
+        <span class="prototype-pill"><i class="bi bi-kanban"></i> 闭环管理</span>
+    </div>
+    <div class="hero-metrics">
+        <div class="hero-metric">
+            <div class="metric-label">待整改</div>
+            <div class="metric-value">{{ summary.open }}</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">已逾期</div>
+            <div class="metric-value">{{ summary.overdue }}</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">已闭环</div>
+            <div class="metric-value">{{ summary.closed }}</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">高风险项</div>
+            <div class="metric-value">{{ summary.high_risk }}</div>
+        </div>
+    </div>
+</section>
+
+<div class="module-grid">
+    <section class="panel-card">
+        <div class="panel-head">
+            <div>
+                <div class="panel-title">隐患台账</div>
+                <div class="panel-subtitle">以风险等级、位置、责任人和整改状态为核心维度</div>
+            </div>
+            <span class="badge-soft red"><i class="bi bi-exclamation-triangle"></i> 高风险优先</span>
+        </div>
+        <div class="panel-body">
+            <div class="filter-bar">
+                <input class="filter-input" placeholder="搜索隐患标题、位置、责任人">
+                <select class="filter-select">
+                    <option>全部风险等级</option>
+                    <option>高风险</option>
+                    <option>中风险</option>
+                    <option>低风险</option>
+                </select>
+                <select class="filter-select">
+                    <option>全部状态</option>
+                    <option>待整改</option>
+                    <option>整改中</option>
+                    <option>待复查</option>
+                    <option>已逾期</option>
+                </select>
+                <button class="ghost-btn"><i class="bi bi-upload"></i> 导出整改清单</button>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>隐患项</th>
+                        <th>位置</th>
+                        <th>风险等级</th>
+                        <th>责任人</th>
+                        <th>整改措施</th>
+                        <th>期限/状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in hazards %}
+                    <tr>
+                        <td>
+                            <div class="mini-card-title">{{ item.title }}</div>
+                        </td>
+                        <td>{{ item.location }}</td>
+                        <td>
+                            {% if item.level == "高风险" %}
+                            <span class="badge-soft red">{{ item.level }}</span>
+                            {% elif item.level == "中风险" %}
+                            <span class="badge-soft amber">{{ item.level }}</span>
+                            {% else %}
+                            <span class="badge-soft green">{{ item.level }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ item.owner }}</td>
+                        <td>{{ item.measure }}</td>
+                        <td>
+                            <div>{{ item.deadline }}</div>
+                            {% if item.status == "已逾期" %}
+                            <span class="badge-soft red">{{ item.status }}</span>
+                            {% elif item.status == "整改中" or item.status == "待整改" %}
+                            <span class="badge-soft amber">{{ item.status }}</span>
+                            {% else %}
+                            <span class="badge-soft blue">{{ item.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="card-list">
+        <section class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <div class="panel-title">流程节点</div>
+                    <div class="panel-subtitle">适合在软著材料中体现业务闭环</div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="timeline">
+                    {% for step in flow_steps %}
+                    <div class="timeline-item">{{ loop.index }}. {{ step }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <div class="panel-title">整改看板</div>
+                    <div class="panel-subtitle">按类别追踪治理进度</div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="bar-list">
+                    <div class="bar-row">
+                        <span>配电设备</span>
+                        <div class="bar-track"><div class="bar-fill" style="width: 82%;"></div></div>
+                        <strong>82%</strong>
+                    </div>
+                    <div class="bar-row">
+                        <span>临时用电</span>
+                        <div class="bar-track"><div class="bar-fill" style="width: 64%;"></div></div>
+                        <strong>64%</strong>
+                    </div>
+                    <div class="bar-row">
+                        <span>消防联动</span>
+                        <div class="bar-track"><div class="bar-fill" style="width: 91%;"></div></div>
+                        <strong>91%</strong>
+                    </div>
+                    <div class="bar-row">
+                        <span>现场管理</span>
+                        <div class="bar-track"><div class="bar-fill" style="width: 73%;"></div></div>
+                        <strong>73%</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <div class="panel-title">移动端填报预留区</div>
+                    <div class="panel-subtitle">后续可接现场拍照、定位、语音转文本</div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <article class="mini-card">
+                    <div class="meta-row">
+                        <span class="badge-soft blue">现场拍照</span>
+                        <span class="badge-soft slate">定位留痕</span>
+                        <span class="badge-soft green">整改附件</span>
+                    </div>
+                    <p class="mini-card-text">
+                        当前页面预留手机端上报能力入口，后续可直接扩展至上传隐患照片、关联标准条款、自动生成整改建议。
+                    </p>
+                </article>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

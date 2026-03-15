@@ -8,12 +8,6 @@ bp = Blueprint("safety", __name__)
 @bp.route("/safety/regulations")
 @login_required
 def regulations():
-    categories = [
-        {"name": "电气作业", "count": 28, "icon": "bi-lightning-charge"},
-        {"name": "设备检修", "count": 16, "icon": "bi-tools"},
-        {"name": "消防联动", "count": 9, "icon": "bi-fire"},
-        {"name": "低压配电", "count": 21, "icon": "bi-diagram-3"},
-    ]
     standards = [
         {
             "code": "GB 26860-2011",
@@ -24,6 +18,8 @@ def regulations():
             "scope": "倒闸操作、停送电、现场作业组织",
             "keywords": ["倒闸操作", "工作票", "安全措施"],
             "updated_at": "2026-03-01",
+            "owner": "周海峰",
+            "department": "安全监督部",
         },
         {
             "code": "GB/T 13869-2017",
@@ -34,6 +30,8 @@ def regulations():
             "scope": "日常用电、人员防护、设备接地",
             "keywords": ["触电预防", "接地", "绝缘"],
             "updated_at": "2026-02-18",
+            "owner": "刘娜",
+            "department": "设备管理部",
         },
         {
             "code": "DL 409-2021",
@@ -44,13 +42,11 @@ def regulations():
             "scope": "输配电线路检修与高处作业",
             "keywords": ["线路检修", "高空作业", "验电"],
             "updated_at": "2026-03-09",
+            "owner": "孙立群",
+            "department": "运行检修中心",
         },
     ]
-    return render_template(
-        "safety_regulations.html",
-        categories=categories,
-        standards=standards,
-    )
+    return render_template("safety_regulations.html", standards=standards)
 
 
 @bp.route("/safety/hazards")
@@ -64,6 +60,7 @@ def hazards():
     }
     hazards = [
         {
+            "ticket_no": "YH-202603-018",
             "title": "配电柜二次侧接线标识缺失",
             "location": "1 号变配电室",
             "level": "中风险",
@@ -71,8 +68,10 @@ def hazards():
             "deadline": "2026-03-18",
             "status": "待整改",
             "measure": "补齐标识并复核图纸一致性",
+            "source": "巡检发现",
         },
         {
+            "ticket_no": "YH-202603-014",
             "title": "高压柜前绝缘垫老化开裂",
             "location": "高压开关室",
             "level": "高风险",
@@ -80,8 +79,10 @@ def hazards():
             "deadline": "2026-03-16",
             "status": "整改中",
             "measure": "更换绝缘垫并完成现场复查",
+            "source": "专项检查",
         },
         {
+            "ticket_no": "YH-202603-011",
             "title": "临时用电箱未设置漏电保护测试记录",
             "location": "检修作业区 B",
             "level": "高风险",
@@ -89,8 +90,10 @@ def hazards():
             "deadline": "2026-03-15",
             "status": "已逾期",
             "measure": "补测并上传记录，锁定责任班组",
+            "source": "现场抽查",
         },
         {
+            "ticket_no": "YH-202603-022",
             "title": "电缆沟可燃杂物未及时清理",
             "location": "厂房东侧电缆沟",
             "level": "低风险",
@@ -98,21 +101,10 @@ def hazards():
             "deadline": "2026-03-20",
             "status": "待复查",
             "measure": "清理杂物并完成照片留档",
+            "source": "班组上报",
         },
     ]
-    flow_steps = [
-        "隐患上报",
-        "风险分级",
-        "整改派发",
-        "整改复查",
-        "闭环归档",
-    ]
-    return render_template(
-        "safety_hazards.html",
-        summary=summary,
-        hazards=hazards,
-        flow_steps=flow_steps,
-    )
+    return render_template("safety_hazards.html", summary=summary, hazards=hazards)
 
 
 @bp.route("/safety/cases")
@@ -180,6 +172,9 @@ def training():
             "duration": "30 分钟",
             "audience": "新员工",
             "status": "进行中",
+            "publish_at": "2026-03-12 09:00",
+            "manager": "培训管理员",
+            "participants": 48,
         },
         {
             "name": "倒闸操作专项测评",
@@ -187,6 +182,9 @@ def training():
             "duration": "20 分钟",
             "audience": "运行班组",
             "status": "待发布",
+            "publish_at": "2026-03-18 14:00",
+            "manager": "运行培训专员",
+            "participants": 32,
         },
         {
             "name": "事故案例月度复训",
@@ -194,30 +192,15 @@ def training():
             "duration": "15 分钟",
             "audience": "全员",
             "status": "已完成",
-        },
-    ]
-    questions = [
-        {
-            "type": "单选题",
-            "stem": "高压设备停电检修前，首先应确认哪项措施已完成？",
-            "difficulty": "基础",
-        },
-        {
-            "type": "判断题",
-            "stem": "验电合格后可省略接地线悬挂步骤。",
-            "difficulty": "高频易错",
-        },
-        {
-            "type": "案例题",
-            "stem": "根据事故经过，指出班组在作业票执行中的两个主要缺陷。",
-            "difficulty": "综合",
+            "publish_at": "2026-03-05 10:00",
+            "manager": "安全培训负责人",
+            "participants": 126,
         },
     ]
     return render_template(
         "safety_training.html",
         exam_stats=exam_stats,
         papers=papers,
-        questions=questions,
     )
 
 

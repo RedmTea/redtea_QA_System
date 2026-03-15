@@ -10,27 +10,6 @@
 {% endblock %}
 
 {% block module_content %}
-<section class="module-hero">
-    <div class="module-hero-top">
-        <div>
-            <span class="module-kicker"><i class="bi bi-graph-up-arrow"></i> 决策分析</span>
-            <h1 class="module-title">面向电气安全运营的综合数据看板</h1>
-            <p class="module-subtitle">
-                汇总问答服务、知识引用、隐患整改、培训考试等多模块数据，为安全管理人员提供趋势判断和重点提醒。
-            </p>
-        </div>
-        <span class="prototype-pill"><i class="bi bi-display"></i> 运营分析</span>
-    </div>
-    <div class="hero-metrics">
-        {% for item in kpis %}
-        <div class="hero-metric">
-            <div class="metric-label">{{ item.label }}</div>
-            <div class="metric-value">{{ item.value }}</div>
-        </div>
-        {% endfor %}
-    </div>
-</section>
-
 <div class="trend-grid">
     {% for item in kpis %}
     <article class="trend-card">

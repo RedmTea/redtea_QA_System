@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}电气安全知识智能问答服务软件{% endblock %}</title>
+    <title>{% block title %}电气安全知识智能问答服务软件v1.0{% endblock %}</title>
     <link href="https://static.docs-hub.com/bootstrapmin_1767018057480.css" rel="stylesheet">
     <link href="https://static.docs-hub.com/bootstrapicons_1767018066482.css" rel="stylesheet">
 
@@ -81,16 +81,13 @@
             color: #fff;
         }
 
-        .brand-icon {
+        .brand-logo {
             width: 40px;
             height: 40px;
             border-radius: 12px;
-            display: grid;
-            place-items: center;
-            background: linear-gradient(135deg, rgba(29, 196, 143, 0.95), rgba(23, 164, 120, 0.95));
-            color: #fff;
-            font-size: 20px;
+            object-fit: cover;
             box-shadow: 0 8px 18px rgba(29, 196, 143, 0.22);
+            flex-shrink: 0;
         }
 
         .brand-copy {
@@ -103,12 +100,6 @@
             font-weight: 700;
             color: #fff;
             line-height: 1.25;
-        }
-
-        .brand-subtitle {
-            margin-top: 4px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.54);
         }
 
         .sidebar-nav {
@@ -663,10 +654,9 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <a href="/" class="sidebar-brand">
-                    <span class="brand-icon"><i class="bi bi-lightning-charge-fill"></i></span>
+                    <img src="{{ url_for('static', filename='logowhite1.jpg') }}" alt="电气安全知识智能问答服务软件" class="brand-logo">
                     <span class="brand-copy">
-                        <span class="brand-title">电气安全知识智能问答服务软件</span>
-                        <span class="brand-subtitle">管理后台</span>
+                        <span class="brand-title">电气安全知识智能问答服务软件v1.0</span>
                     </span>
                 </a>
             </div>
@@ -769,7 +759,7 @@
             <header class="topbar">
                 <div class="topbar-title">
                     <h1 class="topbar-heading">{% block header_title %}{% endblock %}</h1>
-                    <div class="topbar-caption">电气安全知识智能问答服务软件</div>
+                    <div class="topbar-caption">电气安全知识智能问答服务软件v1.0</div>
                 </div>
                 <div class="topbar-actions">
                     {% if current_user %}

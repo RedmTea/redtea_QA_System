@@ -11,17 +11,7 @@
 
 {% block module_content %}
 <section class="module-hero">
-    <div class="module-hero-top">
-        <div>
-            <span class="module-kicker"><i class="bi bi-mortarboard"></i> 学习考核</span>
-            <h1 class="module-title">从题库建设到在线考试的培训管理</h1>
-            <p class="module-subtitle">
-                支持题库管理、随机组卷、案例闯关、错题追踪和成绩统计，强化电气安全知识掌握效果。
-            </p>
-        </div>
-        <span class="prototype-pill"><i class="bi bi-ui-checks-grid"></i> 培训中心</span>
-    </div>
-    <div class="hero-metrics">
+    <div class="hero-metrics" style="margin-top: 0;">
         <div class="hero-metric">
             <div class="metric-label">题库总量</div>
             <div class="metric-value">{{ exam_stats.question_bank }}</div>
@@ -41,31 +31,43 @@
     </div>
 </section>
 
-<div class="trend-grid">
-    {% for item in [
-        {"label": "新员工入厂", "value": "128 人", "delta": "本周新增 14 人"},
-        {"label": "月度专项考试", "value": "6 场", "delta": "2 场待发布"},
-        {"label": "案例学习卡", "value": "32 份", "delta": "由事故案例自动生成"},
-        {"label": "班组排名", "value": "TOP 3", "delta": "运行一班领跑"}
-    ] %}
-    <article class="trend-card">
-        <div class="trend-card-value">{{ item.value }}</div>
-        <div class="trend-card-label">{{ item.label }}</div>
-        <div class="trend-card-delta">{{ item.delta }}</div>
-    </article>
-    {% endfor %}
-</div>
-
-<div class="module-grid">
+<div class="module-grid single-column">
     <section class="panel-card">
         <div class="panel-head">
             <div>
                 <div class="panel-title">考试计划</div>
-                <div class="panel-subtitle">支持固定试卷、随机组卷、案例闯关三种模式</div>
+                <div class="panel-subtitle">按考试模式、发布时间、负责人、参与人数进行计划管理和过程跟踪。</div>
             </div>
-            <span class="badge-soft green"><i class="bi bi-check2-circle"></i> 可接入成绩统计</span>
+            <div class="panel-tools">
+                <button class="action-btn primary"><i class="bi bi-plus-circle"></i> 新建考试</button>
+                <button class="action-btn"><i class="bi bi-send"></i> 批量发布</button>
+                <button class="action-btn"><i class="bi bi-download"></i> 导出成绩</button>
+            </div>
         </div>
         <div class="panel-body">
+            <div class="filter-bar" style="grid-template-columns: 1.3fr repeat(3, 0.8fr) auto;">
+                <input class="filter-input" placeholder="搜索考试名称、对象、负责人">
+                <select class="filter-select">
+                    <option>全部模式</option>
+                    <option>固定试卷</option>
+                    <option>随机组卷</option>
+                    <option>案例闯关</option>
+                </select>
+                <select class="filter-select">
+                    <option>全部状态</option>
+                    <option>进行中</option>
+                    <option>待发布</option>
+                    <option>已完成</option>
+                </select>
+                <select class="filter-select">
+                    <option>全部对象</option>
+                    <option>新员工</option>
+                    <option>运行班组</option>
+                    <option>全员</option>
+                </select>
+                <button class="ghost-btn"><i class="bi bi-funnel"></i> 高级筛选</button>
+            </div>
+
             <table class="data-table">
                 <thead>
                     <tr>
@@ -73,16 +75,23 @@
                         <th>模式</th>
                         <th>时长</th>
                         <th>对象</th>
+                        <th>发布时间</th>
+                        <th>负责人</th>
+                        <th>参与人数</th>
                         <th>状态</th>
+                        <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in papers %}
                     <tr>
-                        <td><div class="mini-card-title">{{ item.name }}</div></td>
+                        <td><div class="text-strong">{{ item.name }}</div></td>
                         <td>{{ item.mode }}</td>
-                        <td>{{ item.duration }}</td>
+                        <td class="nowrap-cell">{{ item.duration }}</td>
                         <td>{{ item.audience }}</td>
+                        <td class="nowrap-cell">{{ item.publish_at }}</td>
+                        <td class="nowrap-cell">{{ item.manager }}</td>
+                        <td class="nowrap-cell">{{ item.participants }} 人</td>
                         <td>
                             {% if item.status == "进行中" %}
                             <span class="badge-soft green">{{ item.status }}</span>
@@ -92,52 +101,22 @@
                             <span class="badge-soft slate">{{ item.status }}</span>
                             {% endif %}
                         </td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-btn"><i class="bi bi-eye"></i> 查看</button>
+                                <button class="action-btn primary"><i class="bi bi-pencil-square"></i> 编辑</button>
+                                {% if item.status == "待发布" %}
+                                <button class="action-btn warn"><i class="bi bi-send-check"></i> 发布</button>
+                                {% else %}
+                                <button class="action-btn"><i class="bi bi-bar-chart"></i> 统计</button>
+                                {% endif %}
+                            </div>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </section>
-
-    <div class="card-list">
-        <section class="panel-card">
-            <div class="panel-head">
-                <div>
-                    <div class="panel-title">题库示例</div>
-                    <div class="panel-subtitle">题型覆盖法规、现场、案例与操作流程</div>
-                </div>
-            </div>
-            <div class="panel-body">
-                <div class="card-list">
-                    {% for item in questions %}
-                    <article class="mini-card">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge-soft blue">{{ item.type }}</span>
-                            <span class="badge-soft amber">{{ item.difficulty }}</span>
-                        </div>
-                        <div class="mini-card-text" style="margin-top: 0.9rem; color: #0f172a;">{{ item.stem }}</div>
-                    </article>
-                    {% endfor %}
-                </div>
-            </div>
-        </section>
-
-        <section class="panel-card">
-            <div class="panel-head">
-                <div>
-                    <div class="panel-title">学习闭环</div>
-                    <div class="panel-subtitle">把问答、案例、标准和考试串起来</div>
-                </div>
-            </div>
-            <div class="panel-body">
-                <div class="timeline">
-                    <div class="timeline-item">从法规标准库抽取条款生成基础题</div>
-                    <div class="timeline-item">从事故案例自动生成情景题和解析</div>
-                    <div class="timeline-item">结合错题本推送个性化复训内容</div>
-                    <div class="timeline-item">考试结果回流看板，识别薄弱班组</div>
-                </div>
-            </div>
-        </section>
-    </div>
 </div>
 {% endblock %}

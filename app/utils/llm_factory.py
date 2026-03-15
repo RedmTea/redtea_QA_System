@@ -34,7 +34,7 @@ class LLMFactory:
         elif provider == "ollama":
             return cls._create_ollama(settings, temperature, max_tokens, streaming)
         else:
-            raise ValueError(f"不支持LLM提供商{provider}")
+            raise ValueError(f"暂不支持LLM提供商{provider}")
 
     @classmethod
     def _create_deekpseek(cls, settings, temperature, max_tokens, streaming):

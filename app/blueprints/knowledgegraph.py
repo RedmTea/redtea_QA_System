@@ -18,5 +18,7 @@ def index():
 @handle_api_error
 def api_graph():
     limit = request.args.get("limit", type=int)
-    graph = knowledgegraph_service.get_graph(limit=limit)
-    return success_response(graph)
+    keyword = request.args.get("q", default="", type=str)
+    label = request.args.get("label", default="", type=str)
+    result = knowledgegraph_service.search(keyword=keyword, label=label, limit=limit)
+    return success_response(result)

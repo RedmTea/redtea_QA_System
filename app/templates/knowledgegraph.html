@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}知识图谱 - 智能问答系统{% endblock %}
+{% block title %}知识图谱检索 - 智能问答系统{% endblock %}
 
-{% block header_title %}知识图谱{% endblock %}
+{% block header_title %}知识图谱检索{% endblock %}
 
 {% block header_actions %}
 <a href="{{ url_for('knowledgebase.kb_list') }}" class="btn btn-outline-primary">
     <i class="bi bi-database"></i>
     <span>知识库</span>
 </a>
-<button type="button" class="btn btn-primary" id="refreshGraphBtn">
+<button type="button" class="btn btn-primary" id="refreshSearchBtn">
     <i class="bi bi-arrow-clockwise"></i>
-    <span>刷新图谱</span>
+    <span>刷新结果</span>
 </button>
 {% endblock %}
 
@@ -23,40 +23,98 @@
 
     .kg-hero {
         border: none;
-        border-radius: 20px;
+        border-radius: 24px;
         overflow: hidden;
-        color: #fff;
+        color: #f8fafc;
         background:
-            radial-gradient(circle at 15% 20%, rgba(34, 197, 94, 0.22), transparent 28%),
-            radial-gradient(circle at 85% 15%, rgba(59, 130, 246, 0.22), transparent 30%),
-            linear-gradient(135deg, #0f172a 0%, #1e293b 45%, #115e59 100%);
+            radial-gradient(circle at 12% 18%, rgba(16, 185, 129, 0.28), transparent 28%),
+            radial-gradient(circle at 84% 20%, rgba(59, 130, 246, 0.28), transparent 34%),
+            linear-gradient(135deg, #0f172a 0%, #133b33 44%, #0b5ed7 100%);
+        box-shadow: 0 18px 48px rgba(15, 23, 42, 0.16);
     }
 
     .kg-hero .card-body {
         padding: 1.75rem;
     }
 
-    .kg-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.45rem;
-        padding: 0.45rem 0.75rem;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.12);
-        font-size: 0.85rem;
-        margin-bottom: 0.9rem;
-    }
-
     .kg-hero-title {
-        font-size: 1.9rem;
+        font-size: 2rem;
         font-weight: 700;
-        margin-bottom: 0.65rem;
+        margin-bottom: 0;
     }
 
-    .kg-hero-text {
-        max-width: 820px;
-        color: rgba(255, 255, 255, 0.88);
-        margin-bottom: 0;
+    .kg-toolbar {
+        margin-top: 1.25rem;
+        padding: 1.1rem;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+    }
+
+    .kg-toolbar-form {
+        display: grid;
+        grid-template-columns: minmax(240px, 1.8fr) minmax(150px, 0.7fr) minmax(120px, 0.45fr) auto auto;
+        gap: 0.75rem;
+        align-items: end;
+    }
+
+    .kg-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    .kg-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: rgba(248, 250, 252, 0.82);
+    }
+
+    .kg-input-wrap {
+        position: relative;
+    }
+
+    .kg-input-wrap i {
+        position: absolute;
+        left: 0.9rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(15, 23, 42, 0.42);
+    }
+
+    .kg-input,
+    .kg-select {
+        width: 100%;
+        min-height: 48px;
+        padding: 0.8rem 0.95rem;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.96);
+        color: #0f172a;
+    }
+
+    .kg-input {
+        padding-left: 2.5rem;
+    }
+
+    .kg-input:focus,
+    .kg-select:focus {
+        outline: none;
+        border-color: rgba(191, 219, 254, 0.9);
+        box-shadow: 0 0 0 4px rgba(191, 219, 254, 0.2);
+    }
+
+    .kg-btn-ghost {
+        min-height: 48px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.08);
+        color: #f8fafc;
+    }
+
+    .kg-btn-ghost:hover {
+        background: rgba(255, 255, 255, 0.14);
+        color: #f8fafc;
     }
 
     .kg-summary-grid {
@@ -67,18 +125,16 @@
     }
 
     .kg-summary-card,
-    .kg-panel,
-    .kg-side-card {
-        border-radius: 18px;
+    .kg-panel {
+        border-radius: 20px;
         border: 1px solid var(--border-color);
         background: var(--card-bg);
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.05);
     }
 
     .kg-summary-card .card-body,
-    .kg-panel .card-body,
-    .kg-side-card .card-body {
-        padding: 1.1rem 1.2rem;
+    .kg-panel .card-body {
+        padding: 1.15rem 1.2rem;
     }
 
     .kg-summary-icon {
@@ -88,217 +144,58 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 0.7rem;
-        font-size: 1.05rem;
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+        color: #0b5ed7;
         background: rgba(59, 130, 246, 0.1);
-        color: #2563eb;
     }
 
-    .kg-panel .card-header,
-    .kg-side-card .card-header {
-        background: transparent;
-        padding: 1rem 1.2rem 0;
-        border-bottom: none;
+    .kg-summary-label {
+        font-size: 0.84rem;
+        color: var(--text-secondary);
+    }
+
+    .kg-summary-value {
+        margin-top: 0.2rem;
+        font-size: 1.55rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .kg-panel-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: center;
+        margin-bottom: 1rem;
     }
 
     .kg-panel-title {
+        margin: 0;
         font-size: 1rem;
         font-weight: 700;
-        margin: 0;
     }
 
     .kg-panel-subtitle {
-        font-size: 0.86rem;
         color: var(--text-secondary);
-        margin-top: 0.35rem;
-    }
-
-    .kg-toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-
-    .kg-search {
-        position: relative;
-        flex: 1;
-        min-width: 260px;
-    }
-
-    .kg-search input {
-        width: 100%;
-        border-radius: 14px;
-        border: 1px solid var(--border-color);
-        padding: 0.8rem 1rem 0.8rem 2.6rem;
-        background: #fff;
-    }
-
-    .kg-search i {
-        position: absolute;
-        left: 0.9rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-secondary);
-    }
-
-    .kg-filter-pills {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    .kg-filter-pill {
-        border: 1px solid var(--border-color);
-        background: #fff;
-        color: var(--text-secondary);
-        border-radius: 999px;
-        padding: 0.45rem 0.85rem;
-        font-size: 0.82rem;
-        cursor: pointer;
-    }
-
-    .kg-filter-pill.active {
-        color: #1d4ed8;
-        border-color: rgba(37, 99, 235, 0.25);
-        background: rgba(37, 99, 235, 0.08);
-    }
-
-    .kg-stage {
-        position: relative;
-        min-height: 640px;
-        border-radius: 18px;
-        overflow: hidden;
-        border: 1px solid var(--border-color);
-        background:
-            linear-gradient(180deg, rgba(148, 163, 184, 0.12), rgba(148, 163, 184, 0.18)),
-            radial-gradient(circle at center, rgba(255, 255, 255, 0.72), transparent 58%);
-    }
-
-    .kg-grid {
-        position: absolute;
-        inset: 0;
-        background-image:
-            linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
-        background-size: 34px 34px;
-        pointer-events: none;
-    }
-
-    .kg-edges {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-    }
-
-    .kg-node-layer {
-        position: absolute;
-        inset: 0;
-    }
-
-    .kg-node {
-        position: absolute;
-        transform: translate(-50%, -50%);
-        width: var(--node-size, 96px);
-        height: var(--node-size, 96px);
-        border: 3px solid var(--node-stroke, rgba(37, 99, 235, 0.28));
-        border-radius: 50%;
-        background:
-            radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.18) 34%, transparent 36%),
-            var(--node-fill, rgba(59, 130, 246, 0.18));
-        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.14);
-        padding: 0.75rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        cursor: pointer;
-        transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
-    }
-
-    .kg-node:hover {
-        transform: translate(-50%, -50%) scale(1.06);
-    }
-
-    .kg-node.active {
-        border-color: var(--node-accent, #2563eb);
-        box-shadow: 0 0 0 7px rgba(191, 219, 254, 0.9), 0 18px 38px rgba(15, 23, 42, 0.18);
-    }
-
-    .kg-node-kind,
-    .kg-detail-tag,
-    .kg-related-item {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        padding: 0.28rem 0.55rem;
-        border-radius: 999px;
-        font-size: 0.74rem;
-        border: 1px solid transparent;
-    }
-
-    .kg-node-name {
-        font-size: 0.96rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        line-height: 1.28;
-        word-break: break-word;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        overflow: hidden;
-    }
-
-    .kg-node-meta {
-        margin-top: 0.28rem;
-        font-size: 0.7rem;
-        color: rgba(15, 23, 42, 0.64);
-        word-break: break-word;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 1;
-        overflow: hidden;
-    }
-
-    .kg-node-shell {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 0.18rem;
-    }
-
-    .kg-node-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: var(--node-accent, #2563eb);
-        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.45);
-    }
-
-    .kg-edge-label {
-        fill: #475569;
-        font-size: 11px;
-        text-anchor: middle;
-        dominant-baseline: middle;
-        paint-order: stroke;
-        stroke: rgba(255, 255, 255, 0.9);
-        stroke-width: 4px;
-        stroke-linejoin: round;
+        font-size: 0.84rem;
     }
 
     .kg-status {
+        margin-bottom: 1rem;
         border-radius: 14px;
         padding: 0.85rem 1rem;
-        margin-bottom: 1rem;
         font-size: 0.9rem;
     }
 
     .kg-status.loading {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        padding: 0;
+        border-radius: 50%;
         background: rgba(59, 130, 246, 0.08);
         color: #1d4ed8;
     }
@@ -313,95 +210,247 @@
         color: #475569;
     }
 
+    .kg-filter-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+        margin-bottom: 1rem;
+    }
+
+    .kg-filter-pill {
+        border: 1px solid var(--border-color);
+        border-radius: 999px;
+        background: #fff;
+        padding: 0.42rem 0.8rem;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+    }
+
+    .kg-filter-pill.active {
+        color: #0b5ed7;
+        border-color: rgba(59, 130, 246, 0.22);
+        background: rgba(59, 130, 246, 0.08);
+    }
+
+    .kg-results {
+        display: grid;
+        gap: 0.9rem;
+    }
+
+    .kg-result-card {
+        width: 100%;
+        text-align: left;
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        background:
+            linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(255, 255, 255, 1)),
+            #fff;
+        padding: 1rem 1.05rem;
+        transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+    }
+
+    .kg-result-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.07);
+        border-color: rgba(59, 130, 246, 0.22);
+    }
+
+    .kg-result-card.active {
+        border-color: rgba(11, 94, 215, 0.32);
+        box-shadow: 0 0 0 4px rgba(191, 219, 254, 0.5);
+    }
+
+    .kg-result-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.9rem;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+    }
+
+    .kg-result-title {
+        margin: 0;
+        font-size: 1.02rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        word-break: break-word;
+    }
+
+    .kg-result-count {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        border-radius: 999px;
+        padding: 0.38rem 0.72rem;
+        background: rgba(15, 23, 42, 0.05);
+        color: var(--text-secondary);
+        font-size: 0.76rem;
+        font-weight: 600;
+    }
+
+    .kg-chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .kg-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        border-radius: 999px;
+        padding: 0.32rem 0.62rem;
+        font-size: 0.76rem;
+        border: 1px solid transparent;
+        background: rgba(16, 185, 129, 0.12);
+        border-color: rgba(16, 185, 129, 0.22);
+        color: #047857;
+    }
+
+    .kg-result-preview {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.55;
+        margin-bottom: 0.85rem;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+    }
+
+    .kg-inline-properties {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+    }
+
+    .kg-inline-property {
+        border-radius: 999px;
+        padding: 0.32rem 0.62rem;
+        background: rgba(59, 130, 246, 0.08);
+        color: #1e3a8a;
+        font-size: 0.76rem;
+    }
+
     .kg-detail-empty {
         color: var(--text-secondary);
         font-size: 0.92rem;
     }
 
-    .kg-detail-name {
-        font-size: 1.1rem;
+    .kg-detail-head {
+        margin-bottom: 1rem;
+    }
+
+    .kg-detail-title {
+        margin: 0 0 0.5rem;
+        font-size: 1.15rem;
         font-weight: 700;
-        margin-bottom: 0.45rem;
     }
 
-    .kg-detail-tags,
-    .kg-related-list,
-    .kg-legend-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    .kg-related-item,
-    .kg-detail-tag {
-        background: rgba(148, 163, 184, 0.1);
-        border-color: rgba(148, 163, 184, 0.2);
-    }
-
-    .kg-props {
+    .kg-property-grid {
         display: grid;
-        gap: 0.7rem;
-        margin-top: 1rem;
+        gap: 0.65rem;
     }
 
-    .kg-prop {
+    .kg-property-card {
         border-radius: 14px;
         border: 1px solid var(--border-color);
-        padding: 0.75rem 0.85rem;
-        background: rgba(248, 250, 252, 0.75);
+        padding: 0.7rem 0.8rem;
+        background: rgba(248, 250, 252, 0.8);
     }
 
-    .kg-prop-label {
+    .kg-property-key {
         display: block;
+        margin-bottom: 0.2rem;
         font-size: 0.76rem;
         color: var(--text-secondary);
-        margin-bottom: 0.25rem;
     }
 
-    .kg-prop-value {
-        font-size: 0.9rem;
+    .kg-property-value {
+        font-size: 0.88rem;
+        color: var(--text-primary);
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .kg-relation-list {
+        display: grid;
+        gap: 0.7rem;
+    }
+
+    .kg-relation-card {
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 0.85rem 0.9rem;
+        background: rgba(248, 250, 252, 0.78);
+    }
+
+    .kg-relation-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.7rem;
+        align-items: center;
+        margin-bottom: 0.35rem;
+    }
+
+    .kg-relation-name {
+        font-weight: 600;
         color: var(--text-primary);
         word-break: break-word;
-        white-space: pre-wrap;
+    }
+
+    .kg-relation-type {
+        border-radius: 999px;
+        padding: 0.2rem 0.55rem;
+        font-size: 0.72rem;
+        background: rgba(249, 115, 22, 0.12);
+        color: #c2410c;
     }
 
     .kg-meta-list {
         display: grid;
-        gap: 0.75rem;
+        gap: 0.7rem;
     }
 
-    .kg-meta-item {
-        border-radius: 14px;
+    .kg-meta-card {
+        border-radius: 16px;
         border: 1px solid var(--border-color);
-        background: rgba(248, 250, 252, 0.75);
-        padding: 0.8rem 0.9rem;
+        padding: 0.85rem 0.9rem;
+        background: rgba(248, 250, 252, 0.78);
     }
 
-    .kg-meta-item span {
+    .kg-meta-card span {
         display: block;
         font-size: 0.75rem;
         color: var(--text-secondary);
-        margin-bottom: 0.3rem;
+        margin-bottom: 0.25rem;
     }
 
-    .kg-meta-item strong {
+    .kg-meta-card strong {
         word-break: break-all;
+        color: var(--text-primary);
     }
 
-    .kg-query {
-        margin: 0;
-        padding: 1rem;
+    .kg-tips {
+        display: grid;
+        gap: 0.7rem;
+    }
+
+    .kg-tip {
         border-radius: 16px;
-        background: #0f172a;
-        color: #e2e8f0;
-        font-size: 0.82rem;
+        padding: 0.85rem 0.9rem;
+        background: rgba(15, 23, 42, 0.03);
+        color: var(--text-secondary);
+        font-size: 0.88rem;
         line-height: 1.55;
-        overflow-x: auto;
     }
 
-    @media (max-width: 991px) {
-        .kg-stage {
-            min-height: 540px;
+    @media (max-width: 1200px) {
+        .kg-toolbar-form {
+            grid-template-columns: 1fr 1fr;
         }
     }
 
@@ -411,19 +460,15 @@
         }
 
         .kg-hero .card-body {
-            padding: 1.4rem;
+            padding: 1.35rem;
         }
 
         .kg-hero-title {
-            font-size: 1.5rem;
+            font-size: 1.55rem;
         }
 
-        .kg-stage {
-            min-height: 480px;
-        }
-
-        .kg-node {
-            min-width: 88px;
+        .kg-toolbar-form {
+            grid-template-columns: 1fr;
         }
     }
 </style>
@@ -433,14 +478,42 @@
 <div class="kg-page">
     <div class="card kg-hero">
         <div class="card-body">
-            <div class="kg-badge">
-                <i class="bi bi-bezier2"></i>
-                <span>Neo4j 实时知识图谱</span>
+            <div class="kg-hero-title">知识图谱检索</div>
+
+            <div class="kg-toolbar">
+                <form class="kg-toolbar-form" id="searchForm">
+                    <label class="kg-field">
+                        <span class="kg-label">关键词</span>
+                        <span class="kg-input-wrap">
+                            <i class="bi bi-search"></i>
+                            <input id="searchInput" class="kg-input" type="text" placeholder="输入名称、标签、描述或任意属性">
+                        </span>
+                    </label>
+                    <label class="kg-field">
+                        <span class="kg-label">标签</span>
+                        <select id="labelSelect" class="kg-select">
+                            <option value="">全部标签</option>
+                        </select>
+                    </label>
+                    <label class="kg-field">
+                        <span class="kg-label">返回数量</span>
+                        <select id="limitSelect" class="kg-select">
+                            <option value="12">12</option>
+                            <option value="24">24</option>
+                            <option value="36">36</option>
+                            <option value="60">60</option>
+                        </select>
+                    </label>
+                    <button type="submit" class="btn btn-light">
+                        <i class="bi bi-stars"></i>
+                        <span>开始检索</span>
+                    </button>
+                    <button type="button" class="btn kg-btn-ghost" id="clearFiltersBtn">
+                        <i class="bi bi-eraser"></i>
+                        <span>清空筛选</span>
+                    </button>
+                </form>
             </div>
-            <div class="kg-hero-title">knowledgegraph 页面已切到真实图谱读取</div>
-            <p class="kg-hero-text">
-                页面会从后端读取你在设置页保存的 Neo4j 连接配置，并自动拉取节点和关系。你可以直接搜索、按标签筛选、查看节点属性和关联关系。
-            </p>
         </div>
     </div>
 
@@ -449,63 +522,60 @@
     <div class="row g-4">
         <div class="col-xl-8">
             <div class="card kg-panel">
-                <div class="card-header">
-                    <h5 class="kg-panel-title">图谱画布</h5>
-                    <div class="kg-panel-subtitle">支持按名称、标签、属性搜索；节点布局由前端根据真实图谱自动计算。</div>
-                </div>
                 <div class="card-body">
-                    <div id="graphStatus"></div>
-
-                    <div class="kg-toolbar">
-                        <div class="kg-search">
-                            <i class="bi bi-search"></i>
-                            <input id="graphSearch" type="text" placeholder="搜索节点名称、标签或属性">
+                    <div class="kg-panel-header">
+                        <div>
+                            <h5 class="kg-panel-title">检索结果</h5>
                         </div>
-                        <div class="kg-filter-pills" id="labelFilters"></div>
+                        <div class="kg-panel-subtitle" id="resultHint"></div>
                     </div>
 
-                    <div class="kg-stage">
-                        <div class="kg-grid"></div>
-                        <svg class="kg-edges" id="graphEdges"></svg>
-                        <div class="kg-node-layer" id="graphNodes"></div>
-                    </div>
+                    <div id="searchStatus"></div>
+                    <div class="kg-filter-pills" id="labelPills"></div>
+                    <div class="kg-results" id="resultsList"></div>
                 </div>
             </div>
         </div>
 
         <div class="col-xl-4">
             <div class="d-flex flex-column gap-4">
-                <div class="card kg-side-card">
-                    <div class="card-header">
-                        <h5 class="kg-panel-title">节点详情</h5>
-                    </div>
+                <div class="card kg-panel">
                     <div class="card-body">
-                        <div id="nodeDetail" class="kg-detail-empty">点击左侧节点后，这里会显示该节点的标签、属性和关联关系。</div>
+                        <div class="kg-panel-header">
+                            <div>
+                                <h5 class="kg-panel-title">节点详情</h5>
+                                <div class="kg-panel-subtitle">选中结果后查看全部属性和关联节点。</div>
+                            </div>
+                        </div>
+                        <div id="detailPanel" class="kg-detail-empty">左侧选择一个结果后，这里会显示该节点的属性与关联关系。</div>
                     </div>
                 </div>
 
-                <div class="card kg-side-card">
-                    <div class="card-header">
-                        <h5 class="kg-panel-title">图谱信息</h5>
-                    </div>
+                <div class="card kg-panel">
                     <div class="card-body">
-                        <div class="kg-legend-list mb-3" id="legendList"></div>
-                        <div class="kg-meta-list" id="graphMeta"></div>
+                        <div class="kg-panel-header">
+                            <div>
+                                <h5 class="kg-panel-title">当前查询</h5>
+                                <div class="kg-panel-subtitle">接口参数和连接信息。</div>
+                            </div>
+                        </div>
+                        <div class="kg-meta-list" id="metaPanel"></div>
                     </div>
                 </div>
 
-                <div class="card kg-side-card">
-                    <div class="card-header">
-                        <h5 class="kg-panel-title">后端查询</h5>
-                    </div>
+                <div class="card kg-panel">
                     <div class="card-body">
-<pre class="kg-query">MATCH (n)
-WITH n LIMIT $limit
-WITH collect(n) AS seed_nodes
-UNWIND seed_nodes AS n
-OPTIONAL MATCH (n)-[r]-(m)
-WHERE m IN seed_nodes
-RETURN raw_nodes, raw_edges</pre>
+                        <div class="kg-panel-header">
+                            <div>
+                                <h5 class="kg-panel-title">使用建议</h5>
+                                <div class="kg-panel-subtitle">更容易找到目标节点的几种方法。</div>
+                            </div>
+                        </div>
+                        <div class="kg-tips">
+                            <div class="kg-tip">先搜实体名称，再缩小到具体标签，结果会更稳定。</div>
+                            <div class="kg-tip">如果同名节点较多，优先看属性摘要和关系数量。</div>
+                            <div class="kg-tip">默认会按关联数量排序，因此更核心的节点会排在前面。</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -516,39 +586,22 @@ RETURN raw_nodes, raw_edges</pre>
 
 {% block extra_js %}
 <script>
-    const labelPalette = [
-        { bg: "rgba(59,130,246,0.12)", text: "#2563eb", border: "rgba(59,130,246,0.25)", icon: "bi-diagram-3" },
-        { bg: "rgba(16,185,129,0.12)", text: "#059669", border: "rgba(16,185,129,0.25)", icon: "bi-node-plus" },
-        { bg: "rgba(249,115,22,0.12)", text: "#ea580c", border: "rgba(249,115,22,0.25)", icon: "bi-box" },
-        { bg: "rgba(168,85,247,0.12)", text: "#9333ea", border: "rgba(168,85,247,0.25)", icon: "bi-person-badge" },
-        { bg: "rgba(239,68,68,0.12)", text: "#dc2626", border: "rgba(239,68,68,0.25)", icon: "bi-exclamation-triangle" },
-        { bg: "rgba(14,165,233,0.12)", text: "#0284c7", border: "rgba(14,165,233,0.25)", icon: "bi-share" },
-    ]
-
     const state = {
-        nodes: [],
-        edges: [],
+        items: [],
+        labels: [],
         meta: null,
-        selectedNodeId: null,
-        selectedLabel: "ALL",
-        keyword: "",
         loading: false,
         error: "",
+        selectedId: null,
+        query: "",
+        label: "",
+        limit: 12,
     }
 
     function escapeHtml(value) {
         const div = document.createElement("div")
         div.textContent = value ?? ""
         return div.innerHTML
-    }
-
-    function getLabelStyle(label) {
-        let hash = 0
-        for (const char of label) {
-            hash = ((hash << 5) - hash) + char.charCodeAt(0)
-            hash |= 0
-        }
-        return labelPalette[Math.abs(hash) % labelPalette.length]
     }
 
     function stringifyValue(value) {
@@ -561,404 +614,319 @@ RETURN raw_nodes, raw_edges</pre>
         return String(value)
     }
 
-    function searchableText(node) {
-        return [
-            node.name,
-            node.label,
-            ...(node.labels || []),
-            stringifyValue(node.properties),
-        ].join(" ").toLowerCase()
-    }
-
-    function getVisibleNodes() {
-        return state.nodes.filter((node) => {
-            const labelMatched = state.selectedLabel === "ALL" || node.label === state.selectedLabel
-            const keywordMatched = !state.keyword || searchableText(node).includes(state.keyword.toLowerCase())
-            return labelMatched && keywordMatched
-        })
-    }
-
-    function getVisibleEdges(visibleNodeIds) {
-        return state.edges.filter((edge) => visibleNodeIds.has(edge.source) && visibleNodeIds.has(edge.target))
-    }
-
-    function attachNodeMetrics(nodes, edges) {
-        const degreeById = new Map(nodes.map((node) => [node.id, 0]))
-        edges.forEach((edge) => {
-            degreeById.set(edge.source, (degreeById.get(edge.source) || 0) + 1)
-            degreeById.set(edge.target, (degreeById.get(edge.target) || 0) + 1)
-        })
-
-        return nodes.map((node) => {
-            const degree = degreeById.get(node.id) || 0
-            return {
-                ...node,
-                degree,
-                size: Math.max(84, Math.min(132, 84 + degree * 6)),
-            }
-        })
-    }
-
-    function hashString(value) {
-        let hash = 2166136261
-        const text = String(value || "")
-        for (let i = 0; i < text.length; i += 1) {
-            hash ^= text.charCodeAt(i)
-            hash = Math.imul(hash, 16777619)
+    function truncateText(value, maxLength = 120) {
+        const text = stringifyValue(value)
+        if (text.length <= maxLength) {
+            return text
         }
-        return hash >>> 0
+        return `${text.slice(0, maxLength)}...`
     }
 
-    function seededUnit(seed) {
-        const x = Math.sin(seed) * 10000
-        return x - Math.floor(x)
+    function syncInputsFromState() {
+        document.getElementById("searchInput").value = state.query
+        document.getElementById("limitSelect").value = String(state.limit)
     }
 
-    function computeLayout(nodes, edges) {
-        if (!nodes.length) {
-            return []
+    function readStateFromUrl() {
+        const params = new URLSearchParams(window.location.search)
+        state.query = params.get("q") || ""
+        state.label = params.get("label") || ""
+        state.limit = Number.parseInt(params.get("limit") || "12", 10)
+        if (!Number.isFinite(state.limit) || state.limit < 1) {
+            state.limit = 12
         }
+    }
 
-        const width = 1000
-        const height = 640
-        const positions = new Map()
-        const velocity = new Map()
-        const anchors = new Map()
-        const degreeById = new Map(nodes.map((node) => [node.id, node.degree || 0]))
-
-        nodes.forEach((node) => {
-            const seed = hashString(node.id)
-            const marginX = Math.max(72, ((node.size || 96) / 2) + 28)
-            const marginY = Math.max(68, ((node.size || 96) / 2) + 24)
-            const spreadX = width - marginX * 2
-            const spreadY = height - marginY * 2
-            const anchorX = marginX + seededUnit(seed + 0.17) * spreadX
-            const anchorY = marginY + seededUnit(seed + 0.73) * spreadY
-            const jitterX = (seededUnit(seed + 1.13) - 0.5) * 90
-            const jitterY = (seededUnit(seed + 1.91) - 0.5) * 90
-
-            anchors.set(node.id, { x: anchorX, y: anchorY })
-            positions.set(node.id, {
-                x: Math.min(width - marginX, Math.max(marginX, anchorX + jitterX)),
-                y: Math.min(height - marginY, Math.max(marginY, anchorY + jitterY)),
-            })
-            velocity.set(node.id, { x: 0, y: 0 })
-        })
-
-        for (let step = 0; step < 180; step += 1) {
-            const forces = new Map(nodes.map((node) => [node.id, { x: 0, y: 0 }]))
-
-            for (let i = 0; i < nodes.length; i += 1) {
-                for (let j = i + 1; j < nodes.length; j += 1) {
-                    const a = positions.get(nodes[i].id)
-                    const b = positions.get(nodes[j].id)
-                    const dx = a.x - b.x
-                    const dy = a.y - b.y
-                    const distance = Math.max(Math.sqrt(dx * dx + dy * dy), 1)
-                    const repulsion = 15000 / (distance * distance)
-                    const fx = (dx / distance) * repulsion
-                    const fy = (dy / distance) * repulsion
-                    forces.get(nodes[i].id).x += fx
-                    forces.get(nodes[i].id).y += fy
-                    forces.get(nodes[j].id).x -= fx
-                    forces.get(nodes[j].id).y -= fy
-                }
-            }
-
-            edges.forEach((edge) => {
-                const source = positions.get(edge.source)
-                const target = positions.get(edge.target)
-                if (!source || !target) {
-                    return
-                }
-                const dx = target.x - source.x
-                const dy = target.y - source.y
-                const distance = Math.max(Math.sqrt(dx * dx + dy * dy), 1)
-                const idealDistance = 140 + Math.min(90, ((degreeById.get(edge.source) || 0) + (degreeById.get(edge.target) || 0)) * 2)
-                const attraction = (distance - idealDistance) * 0.007
-                const fx = (dx / distance) * attraction
-                const fy = (dy / distance) * attraction
-                forces.get(edge.source).x += fx
-                forces.get(edge.source).y += fy
-                forces.get(edge.target).x -= fx
-                forces.get(edge.target).y -= fy
-            })
-
-            nodes.forEach((node) => {
-                const position = positions.get(node.id)
-                const force = forces.get(node.id)
-                const vel = velocity.get(node.id)
-                const anchor = anchors.get(node.id)
-                const marginX = Math.max(56, ((node.size || 96) / 2) + 12)
-                const marginY = Math.max(52, ((node.size || 96) / 2) + 10)
-
-                force.x += (anchor.x - position.x) * 0.0026
-                force.y += (anchor.y - position.y) * 0.0026
-                force.x += (width / 2 - position.x) * 0.0007
-                force.y += (height / 2 - position.y) * 0.0007
-
-                vel.x = (vel.x + force.x) * 0.82
-                vel.y = (vel.y + force.y) * 0.82
-
-                position.x = Math.min(width - marginX, Math.max(marginX, position.x + vel.x))
-                position.y = Math.min(height - marginY, Math.max(marginY, position.y + vel.y))
-            })
+    function updateUrl() {
+        const params = new URLSearchParams()
+        if (state.query) {
+            params.set("q", state.query)
         }
+        if (state.label) {
+            params.set("label", state.label)
+        }
+        if (state.limit) {
+            params.set("limit", String(state.limit))
+        }
+        const queryString = params.toString()
+        const nextUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname
+        window.history.replaceState({}, "", nextUrl)
+    }
 
-        return nodes.map((node) => {
-            const position = positions.get(node.id)
-            return {
-                ...node,
-                x: (position.x / width) * 100,
-                y: (position.y / height) * 100,
-            }
-        })
+    function getSelectedItem() {
+        return state.items.find((item) => item.id === state.selectedId) || null
+    }
+
+    function renderSummary() {
+        const selected = getSelectedItem()
+        const cards = [
+            { label: "匹配总数", value: state.meta?.total ?? 0, icon: "bi-search" },
+            { label: "当前返回", value: state.meta?.returned ?? 0, icon: "bi-collection" },
+            { label: "可选标签", value: state.labels.length, icon: "bi-tags" },
+            { label: "当前节点关系", value: selected?.relation_count ?? "-", icon: "bi-share" },
+        ]
+
+        document.getElementById("summaryGrid").innerHTML = cards.map((card) => `
+            <div class="card kg-summary-card">
+                <div class="card-body">
+                    <div class="kg-summary-icon"><i class="bi ${card.icon}"></i></div>
+                    <div class="kg-summary-label">${escapeHtml(card.label)}</div>
+                    <div class="kg-summary-value">${escapeHtml(String(card.value))}</div>
+                </div>
+            </div>
+        `).join("")
     }
 
     function renderStatus() {
-        const container = document.getElementById("graphStatus")
+        const container = document.getElementById("searchStatus")
         if (state.loading) {
-            container.innerHTML = '<div class="kg-status loading"><i class="bi bi-arrow-repeat me-2"></i>正在从 Neo4j 加载知识图谱...</div>'
+            container.innerHTML = '<div class="kg-status loading"><div class="spinner-border spinner-border-sm" role="status" aria-label="loading"></div></div>'
             return
         }
         if (state.error) {
             container.innerHTML = `<div class="kg-status error"><i class="bi bi-exclamation-octagon me-2"></i>${escapeHtml(state.error)}</div>`
             return
         }
-        if (!state.nodes.length) {
-            container.innerHTML = '<div class="kg-status empty"><i class="bi bi-info-circle me-2"></i>当前没有加载到节点，请确认 Neo4j 中有数据。</div>'
+        if (!state.items.length) {
+            container.innerHTML = '<div class="kg-status empty"><i class="bi bi-info-circle me-2"></i>当前条件下没有匹配结果，请尝试缩短关键词或切换标签。</div>'
             return
         }
         container.innerHTML = ""
     }
 
-    function renderSummary() {
-        const summaryGrid = document.getElementById("summaryGrid")
-        const labels = [...new Set(state.nodes.map((node) => node.label))]
-        const selectedNode = state.nodes.find((node) => node.id === state.selectedNodeId)
-        const cards = [
-            { label: "节点总数", value: state.meta?.node_count ?? 0, icon: "bi-diagram-3" },
-            { label: "关系总数", value: state.meta?.edge_count ?? 0, icon: "bi-share" },
-            { label: "标签种类", value: labels.length, icon: "bi-tags" },
-            { label: "当前选中", value: selectedNode?.name || "-", icon: "bi-cursor" },
+    function renderLabelControls() {
+        const select = document.getElementById("labelSelect")
+        const options = ['<option value="">全部标签</option>'].concat(
+            state.labels.map((item) => `<option value="${escapeHtml(item.label)}">${escapeHtml(item.label)} (${item.count})</option>`)
+        )
+        select.innerHTML = options.join("")
+        select.value = state.label
+
+        const pills = [
+            `<button type="button" class="kg-filter-pill ${state.label === "" ? "active" : ""}" data-label="">全部</button>`,
+            ...state.labels.map((item) => `
+                <button type="button" class="kg-filter-pill ${state.label === item.label ? "active" : ""}" data-label="${escapeHtml(item.label)}">
+                    ${escapeHtml(item.label)} (${item.count})
+                </button>
+            `),
         ]
-
-        summaryGrid.innerHTML = cards.map((card) => `
-            <div class="card kg-summary-card">
-                <div class="card-body">
-                    <div class="kg-summary-icon"><i class="bi ${card.icon}"></i></div>
-                    <div class="text-secondary small">${escapeHtml(card.label)}</div>
-                    <div class="fs-4 fw-semibold">${escapeHtml(String(card.value))}</div>
-                </div>
-            </div>
-        `).join("")
-    }
-
-    function renderFilters() {
-        const filterContainer = document.getElementById("labelFilters")
-        const labels = ["ALL", ...new Set(state.nodes.map((node) => node.label))]
-        filterContainer.innerHTML = labels.map((label) => `
-            <button type="button" class="kg-filter-pill ${state.selectedLabel === label ? "active" : ""}" data-label="${escapeHtml(label)}">
-                ${label === "ALL" ? "全部" : escapeHtml(label)}
-            </button>
-        `).join("")
-
-        filterContainer.querySelectorAll(".kg-filter-pill").forEach((button) => {
+        const pillContainer = document.getElementById("labelPills")
+        pillContainer.innerHTML = pills.join("")
+        pillContainer.querySelectorAll(".kg-filter-pill").forEach((button) => {
             button.addEventListener("click", () => {
-                state.selectedLabel = button.dataset.label
-                renderGraph()
+                state.label = button.dataset.label || ""
+                document.getElementById("labelSelect").value = state.label
+                loadResults()
             })
         })
     }
 
-    function renderLegend() {
-        const legendList = document.getElementById("legendList")
-        const labels = [...new Set(state.nodes.map((node) => node.label))]
-        legendList.innerHTML = labels.map((label) => {
-            const style = getLabelStyle(label)
-            const count = state.nodes.filter((node) => node.label === label).length
+    function renderResults() {
+        const selected = getSelectedItem()
+        const list = document.getElementById("resultsList")
+        const resultHint = document.getElementById("resultHint")
+        resultHint.textContent = state.meta ? `返回 ${state.meta.returned} / ${state.meta.total}` : ""
+
+        if (!state.items.length) {
+            list.innerHTML = ""
+            return
+        }
+
+        list.innerHTML = state.items.map((item) => {
+            const inlineProperties = Object.entries(item.properties || {})
+                .filter(([key, value]) => !["name", "title", "label", "display_name", "displayName", "caption", "code", "id"].includes(key) && value !== null && value !== "")
+                .slice(0, 3)
+                .map(([key, value]) => `<span class="kg-inline-property">${escapeHtml(key)}: ${escapeHtml(truncateText(value, 26))}</span>`)
+                .join("")
+
+            const labels = (item.labels || []).slice(0, 3).map((label) => `<span class="kg-chip"><i class="bi bi-diagram-3"></i>${escapeHtml(label)}</span>`).join("")
+
             return `
-                <span class="kg-node-kind" style="background:${style.bg};color:${style.text};border-color:${style.border};">
-                    <i class="bi ${style.icon}"></i>
-                    ${escapeHtml(label)} (${count})
-                </span>
+                <button type="button" class="kg-result-card ${selected?.id === item.id ? "active" : ""}" data-node-id="${escapeHtml(item.id)}">
+                    <div class="kg-result-top">
+                        <div>
+                            <h6 class="kg-result-title">${escapeHtml(item.name)}</h6>
+                        </div>
+                        <span class="kg-result-count">
+                            <i class="bi bi-share"></i>
+                            ${escapeHtml(String(item.relation_count || 0))}
+                        </span>
+                    </div>
+                    <div class="kg-chip-row">
+                        ${labels || `<span class="kg-chip">${escapeHtml(item.label || "Node")}</span>`}
+                    </div>
+                    <div class="kg-result-preview">${escapeHtml(item.preview || item.name)}</div>
+                    <div class="kg-inline-properties">
+                        ${inlineProperties || '<span class="kg-inline-property">无更多摘要属性</span>'}
+                    </div>
+                </button>
             `
         }).join("")
+
+        list.querySelectorAll(".kg-result-card").forEach((card) => {
+            card.addEventListener("click", () => {
+                state.selectedId = card.dataset.nodeId
+                renderSummary()
+                renderResults()
+                renderDetail()
+            })
+        })
+    }
+
+    function renderDetail() {
+        const container = document.getElementById("detailPanel")
+        const item = getSelectedItem()
+        if (!item) {
+            container.className = "kg-detail-empty"
+            container.textContent = "左侧选择一个结果后，这里会显示该节点的属性与关联关系。"
+            return
+        }
+
+        const properties = Object.entries(item.properties || {})
+            .map(([key, value]) => `
+                <div class="kg-property-card">
+                    <span class="kg-property-key">${escapeHtml(key)}</span>
+                    <div class="kg-property-value">${escapeHtml(stringifyValue(value))}</div>
+                </div>
+            `)
+            .join("")
+
+        const relations = (item.relations || []).map((relation) => `
+            <div class="kg-relation-card">
+                <div class="kg-relation-top">
+                    <div class="kg-relation-name">${escapeHtml(relation.other_name)}</div>
+                    <span class="kg-relation-type">${escapeHtml(relation.direction)} · ${escapeHtml(relation.type)}</span>
+                </div>
+                <div class="kg-chip-row">
+                    <span class="kg-chip">${escapeHtml(relation.other_label)}</span>
+                    <span class="kg-chip">ID: ${escapeHtml(relation.other_id)}</span>
+                </div>
+                <div class="kg-result-preview">${escapeHtml(relation.other_preview || relation.other_name)}</div>
+            </div>
+        `).join("")
+
+        container.className = ""
+        container.innerHTML = `
+            <div class="kg-detail-head">
+                <h6 class="kg-detail-title">${escapeHtml(item.name)}</h6>
+                <div class="kg-chip-row">
+                    ${(item.labels || []).map((label) => `<span class="kg-chip">${escapeHtml(label)}</span>`).join("")}
+                    <span class="kg-chip">ID: ${escapeHtml(item.id)}</span>
+                    <span class="kg-chip">关系数: ${escapeHtml(String(item.relation_count || 0))}</span>
+                </div>
+            </div>
+            <div class="kg-property-grid">
+                ${properties || '<div class="kg-detail-empty">该节点没有可展示的属性。</div>'}
+            </div>
+            <div class="mt-4">
+                <div class="kg-panel-subtitle mb-2">关联节点</div>
+                <div class="kg-relation-list">
+                    ${relations || '<div class="kg-detail-empty">当前没有采集到关联节点。</div>'}
+                </div>
+            </div>
+        `
     }
 
     function renderMeta() {
-        const metaContainer = document.getElementById("graphMeta")
+        const meta = state.meta || {}
         const items = [
-            { label: "连接 URI", value: state.meta?.uri || "-" },
-            { label: "Database", value: state.meta?.database || "-" },
-            { label: "本次节点上限", value: state.meta?.limit || "-" },
+            { label: "关键词", value: meta.query || "-" },
+            { label: "标签", value: meta.label || "全部标签" },
+            { label: "返回上限", value: meta.limit || "-" },
+            { label: "连接 URI", value: meta.uri || "-" },
+            { label: "Database", value: meta.database || "-" },
         ]
 
-        metaContainer.innerHTML = items.map((item) => `
-            <div class="kg-meta-item">
+        document.getElementById("metaPanel").innerHTML = items.map((item) => `
+            <div class="kg-meta-card">
                 <span>${escapeHtml(item.label)}</span>
                 <strong>${escapeHtml(String(item.value))}</strong>
             </div>
         `).join("")
     }
 
-    function renderNodeDetail() {
-        const detail = document.getElementById("nodeDetail")
-        const node = state.nodes.find((item) => item.id === state.selectedNodeId)
-
-        if (!node) {
-            detail.className = "kg-detail-empty"
-            detail.textContent = "当前筛选结果下没有选中的节点。"
-            return
-        }
-
-        const relatedEdges = state.edges.filter((edge) => edge.source === node.id || edge.target === node.id)
-        const relatedItems = relatedEdges.map((edge) => {
-            const otherNodeId = edge.source === node.id ? edge.target : edge.source
-            const otherNode = state.nodes.find((item) => item.id === otherNodeId)
-            return `${edge.type} -> ${otherNode ? otherNode.name : otherNodeId}`
-        })
-
-        const style = getLabelStyle(node.label)
-        const props = Object.entries(node.properties || {})
-
-        detail.className = ""
-        detail.innerHTML = `
-            <div class="kg-detail-name">${escapeHtml(node.name)}</div>
-            <div class="kg-detail-tags mb-3">
-                <span class="kg-node-kind" style="background:${style.bg};color:${style.text};border-color:${style.border};">
-                    <i class="bi ${style.icon}"></i>
-                    ${escapeHtml(node.label)}
-                </span>
-                <span class="kg-detail-tag">ID: ${escapeHtml(node.id)}</span>
-            </div>
-            <div class="text-secondary small mb-2">关联关系</div>
-            <div class="kg-related-list mb-3">
-                ${relatedItems.length ? relatedItems.map((item) => `<span class="kg-related-item">${escapeHtml(item)}</span>`).join("") : '<span class="kg-detail-empty">暂无关联关系</span>'}
-            </div>
-            <div class="text-secondary small mb-2">属性</div>
-            <div class="kg-props">
-                ${props.length ? props.map(([key, value]) => `
-                    <div class="kg-prop">
-                        <span class="kg-prop-label">${escapeHtml(key)}</span>
-                        <div class="kg-prop-value">${escapeHtml(stringifyValue(value))}</div>
-                    </div>
-                `).join("") : '<div class="kg-detail-empty">该节点没有属性</div>'}
-            </div>
-        `
-    }
-
-    function renderGraph() {
-        renderStatus()
-        renderSummary()
-        renderFilters()
-        renderLegend()
-        renderMeta()
-
-        const nodeLayer = document.getElementById("graphNodes")
-        const edgeLayer = document.getElementById("graphEdges")
-        const visibleNodes = getVisibleNodes()
-        const visibleNodeIds = new Set(visibleNodes.map((node) => node.id))
-        const visibleEdges = getVisibleEdges(visibleNodeIds)
-
-        if (!visibleNodeIds.has(state.selectedNodeId)) {
-            state.selectedNodeId = visibleNodes[0]?.id || null
-        }
-
-        edgeLayer.innerHTML = visibleEdges.map((edge) => {
-            const source = visibleNodes.find((node) => node.id === edge.source)
-            const target = visibleNodes.find((node) => node.id === edge.target)
-            if (!source || !target) {
-                return ""
-            }
-            const midX = (source.x + target.x) / 2
-            const midY = (source.y + target.y) / 2
-            return `
-                <line x1="${source.x}%" y1="${source.y}%" x2="${target.x}%" y2="${target.y}%"
-                    stroke="rgba(148,163,184,0.9)" stroke-width="1.8" marker-end="url(#kgArrow)" />
-                <text x="${midX}%" y="${midY}%" class="kg-edge-label">
-                    ${escapeHtml(edge.type)}
-                </text>
-            `
-        }).join("")
-        edgeLayer.innerHTML = `
-            <defs>
-                <marker id="kgArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-                    <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(148,163,184,0.9)"></path>
-                </marker>
-            </defs>
-            ${edgeLayer.innerHTML}
-        `
-
-        nodeLayer.innerHTML = visibleNodes.map((node) => {
-            const style = getLabelStyle(node.label)
-            return `
-                <button
-                    type="button"
-                    class="kg-node ${state.selectedNodeId === node.id ? "active" : ""}"
-                    data-node-id="${escapeHtml(node.id)}"
-                    style="left:${node.x}%; top:${node.y}%; --node-size:${node.size || 96}px; --node-fill:${style.bg}; --node-stroke:${style.border}; --node-accent:${style.text};"
-                >
-                    <span class="kg-node-shell">
-                        <span class="kg-node-dot"></span>
-                        <span class="kg-node-name">${escapeHtml(node.name)}</span>
-                        <span class="kg-node-meta">${escapeHtml(node.label)} · ${node.degree || 0}</span>
-                    </span>
-                </button>
-            `
-        }).join("")
-
-        nodeLayer.querySelectorAll(".kg-node").forEach((button) => {
-            button.addEventListener("click", () => {
-                state.selectedNodeId = button.dataset.nodeId
-                renderGraph()
-            })
-        })
-
-        renderNodeDetail()
-    }
-
-    async function loadGraph() {
+    async function loadResults() {
         state.loading = true
         state.error = ""
         renderStatus()
+        updateUrl()
+
+        const params = new URLSearchParams()
+        if (state.query) {
+            params.set("q", state.query)
+        }
+        if (state.label) {
+            params.set("label", state.label)
+        }
+        params.set("limit", String(state.limit))
 
         try {
-            const response = await fetch("/api/v1/knowledgegraph")
+            const response = await fetch(`/api/v1/knowledgegraph?${params.toString()}`)
             const result = await response.json()
             if (!response.ok || result.code !== 200) {
-                throw new Error(result.message || "图谱加载失败")
+                throw new Error(result.message || "图谱检索失败")
             }
 
-            const nodes = result.data?.nodes || []
-            const edges = result.data?.edges || []
+            state.items = result.data?.items || []
+            state.labels = result.data?.labels || []
             state.meta = result.data?.meta || null
-            state.nodes = computeLayout(attachNodeMetrics(nodes, edges), edges)
-            state.edges = edges
-            state.selectedNodeId = state.nodes[0]?.id || null
+            if (!state.items.some((item) => item.id === state.selectedId)) {
+                state.selectedId = state.items[0]?.id || null
+            }
         } catch (error) {
-            state.nodes = []
-            state.edges = []
+            state.items = []
+            state.labels = []
             state.meta = null
-            state.selectedNodeId = null
-            state.error = error.message || "图谱加载失败"
+            state.selectedId = null
+            state.error = error.message || "图谱检索失败"
         } finally {
             state.loading = false
-            renderGraph()
+            renderStatus()
+            renderSummary()
+            renderLabelControls()
+            renderResults()
+            renderDetail()
+            renderMeta()
         }
     }
 
-    document.getElementById("graphSearch")?.addEventListener("input", (event) => {
-        state.keyword = event.target.value.trim()
-        renderGraph()
+    document.getElementById("searchForm")?.addEventListener("submit", (event) => {
+        event.preventDefault()
+        state.query = document.getElementById("searchInput").value.trim()
+        state.label = document.getElementById("labelSelect").value
+        state.limit = Number.parseInt(document.getElementById("limitSelect").value, 10) || 12
+        loadResults()
     })
 
-    document.getElementById("refreshGraphBtn")?.addEventListener("click", () => {
-        loadGraph()
+    document.getElementById("labelSelect")?.addEventListener("change", (event) => {
+        state.label = event.target.value
+        loadResults()
+    })
+
+    document.getElementById("limitSelect")?.addEventListener("change", (event) => {
+        state.limit = Number.parseInt(event.target.value, 10) || 12
+    })
+
+    document.getElementById("clearFiltersBtn")?.addEventListener("click", () => {
+        state.query = ""
+        state.label = ""
+        state.limit = 12
+        syncInputsFromState()
+        document.getElementById("labelSelect").value = ""
+        loadResults()
+    })
+
+    document.getElementById("refreshSearchBtn")?.addEventListener("click", () => {
+        state.query = document.getElementById("searchInput").value.trim()
+        state.label = document.getElementById("labelSelect").value
+        state.limit = Number.parseInt(document.getElementById("limitSelect").value, 10) || 12
+        loadResults()
     })
 
     document.addEventListener("DOMContentLoaded", () => {
-        loadGraph()
+        readStateFromUrl()
+        syncInputsFromState()
+        loadResults()
     })
 </script>
 {% endblock %}

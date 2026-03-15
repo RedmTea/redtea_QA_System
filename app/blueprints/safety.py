@@ -5,12 +5,6 @@ from app.utils.auth import login_required
 bp = Blueprint("safety", __name__)
 
 
-@bp.route("/safety")
-@login_required
-def overview():
-    return render_template("safety_overview.html")
-
-
 @bp.route("/safety/regulations")
 @login_required
 def regulations():

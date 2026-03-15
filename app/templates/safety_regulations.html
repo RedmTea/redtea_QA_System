@@ -1,0 +1,166 @@
+{% extends "safety_module_base.html" %}
+
+{% block title %}法规标准库 - 电气安全知识智能问答服务软件{% endblock %}
+{% block header_title %}电气安全法规标准库{% endblock %}
+{% block header_actions %}
+<a href="{{ url_for('safety.dashboard') }}" class="btn btn-outline-primary">
+    <i class="bi bi-bar-chart"></i>
+    <span>查看分析看板</span>
+</a>
+{% endblock %}
+
+{% block module_content %}
+<section class="module-hero">
+    <div class="module-hero-top">
+        <div>
+            <span class="module-kicker"><i class="bi bi-journal-text"></i> 标准知识中枢</span>
+            <h1 class="module-title">法规、标准、制度一体化检索</h1>
+            <p class="module-subtitle">
+                面向电气安全场景统一管理国家标准、行业规范和企业制度，支持版本控制、适用范围标记、条款检索和问答依据引用。
+            </p>
+        </div>
+        <span class="prototype-pill"><i class="bi bi-stars"></i> 标准管理</span>
+    </div>
+    <div class="hero-metrics">
+        <div class="hero-metric">
+            <div class="metric-label">收录标准</div>
+            <div class="metric-value">126</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">待复核版本</div>
+            <div class="metric-value">12</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">高频引用条款</div>
+            <div class="metric-value">38</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">问答关联度</div>
+            <div class="metric-value">91%</div>
+        </div>
+    </div>
+</section>
+
+<div class="module-grid">
+    <section class="panel-card">
+        <div class="panel-head">
+            <div>
+                <div class="panel-title">标准目录</div>
+                <div class="panel-subtitle">支持编号、名称、状态、适用场景组合筛选</div>
+            </div>
+            <span class="badge-soft amber"><i class="bi bi-lightning"></i> 可扩展接入知识库文档</span>
+        </div>
+        <div class="panel-body">
+            <div class="filter-bar">
+                <input class="filter-input" placeholder="搜索标准编号、条款关键词、适用场景">
+                <select class="filter-select">
+                    <option>全部标准层级</option>
+                    <option>国家标准</option>
+                    <option>行业标准</option>
+                    <option>企业制度</option>
+                </select>
+                <select class="filter-select">
+                    <option>全部状态</option>
+                    <option>现行有效</option>
+                    <option>重点推荐</option>
+                    <option>待复核</option>
+                </select>
+                <button class="ghost-btn"><i class="bi bi-funnel"></i> 高级筛选</button>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>标准编号</th>
+                        <th>标准名称</th>
+                        <th>层级</th>
+                        <th>适用范围</th>
+                        <th>状态</th>
+                        <th>更新时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in standards %}
+                    <tr>
+                        <td>
+                            <div class="mini-card-title">{{ item.code }}</div>
+                            <div class="panel-subtitle">{{ item.version }}</div>
+                        </td>
+                        <td>
+                            <div class="mini-card-title">{{ item.name }}</div>
+                            <div class="meta-row">
+                                {% for keyword in item.keywords %}
+                                <span class="meta-chip">{{ keyword }}</span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td><span class="badge-soft blue">{{ item.level }}</span></td>
+                        <td>{{ item.scope }}</td>
+                        <td>
+                            {% if item.status == "现行有效" %}
+                            <span class="badge-soft green">{{ item.status }}</span>
+                            {% elif item.status == "重点推荐" %}
+                            <span class="badge-soft amber">{{ item.status }}</span>
+                            {% else %}
+                            <span class="badge-soft red">{{ item.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ item.updated_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="card-list">
+        <section class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <div class="panel-title">分类总览</div>
+                    <div class="panel-subtitle">展示标准主题入口与分类结构</div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="card-list">
+                    {% for category in categories %}
+                    <article class="mini-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="mini-card-title"><i class="bi {{ category.icon }}"></i> {{ category.name }}</div>
+                            <span class="badge-soft slate">{{ category.count }} 项</span>
+                        </div>
+                        <p class="mini-card-text">支持在该分类下维护适用设备、风险点、关联问答模板和版本变更记录。</p>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <div class="panel-title">条款引用预览</div>
+                    <div class="panel-subtitle">回答问题时显示依据来源与版本信息</div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <article class="mini-card">
+                    <div class="meta-row">
+                        <span class="badge-soft blue">问答命中条款</span>
+                        <span class="badge-soft green">引用可信</span>
+                    </div>
+                    <div class="mini-card-title mt-3">关于停电检修前是否必须验电？</div>
+                    <p class="mini-card-text">
+                        系统回答区可展示“相关条款摘录、标准编号、适用对象、版本生效日期、最近修订说明”，用于支撑软著中的专业性展示。
+                    </p>
+                    <div class="timeline">
+                        <div class="timeline-item">引用条款：GB 26860-2011 第 5.2 节</div>
+                        <div class="timeline-item">适用设备：变配电室、高压柜、检修隔离点</div>
+                        <div class="timeline-item">问答联动：支持直接跳转至知识库原文</div>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

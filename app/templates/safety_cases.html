@@ -1,0 +1,135 @@
+{% extends "safety_module_base.html" %}
+
+{% block title %}事故案例分析 - 电气作业安全智能问答系统{% endblock %}
+{% block header_title %}事故案例分析{% endblock %}
+{% block header_actions %}
+<button class="btn btn-outline-primary">
+    <i class="bi bi-file-earmark-plus"></i>
+    <span>录入新案例</span>
+</button>
+{% endblock %}
+
+{% block module_content %}
+<section class="module-hero">
+    <div class="hero-metrics" style="margin-top: 0;">
+        <div class="hero-metric">
+            <div class="metric-label">已归档案例</div>
+            <div class="metric-value">74</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">高频事故类型</div>
+            <div class="metric-value">触电</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">案例转试题</div>
+            <div class="metric-value">186</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">相似案例推荐</div>
+            <div class="metric-value">3 秒</div>
+        </div>
+    </div>
+</section>
+
+<div class="module-grid">
+    <section class="panel-card">
+        <div class="panel-head">
+            <div>
+                <div class="panel-title">重点案例复盘</div>
+                <div class="panel-subtitle">展示案例主档、成因拆解和防范措施</div>
+            </div>
+            <span class="badge-soft amber"><i class="bi bi-lightbulb"></i> 可联动问答推荐</span>
+        </div>
+        <div class="panel-body">
+            <article class="mini-card">
+                <div class="meta-row">
+                    <span class="badge-soft red">{{ featured_case.type }}</span>
+                    <span class="badge-soft blue">{{ featured_case.scene }}</span>
+                    <span class="badge-soft slate">{{ featured_case.loss }}</span>
+                </div>
+                <h3 class="module-title" style="font-size: 1.45rem; color: #0f172a; margin-top: 1rem;">{{ featured_case.title }}</h3>
+                <div class="module-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                    <div class="mini-card">
+                        <div class="mini-card-title">直接原因</div>
+                        <div class="timeline" style="margin-top: 0.8rem;">
+                            {% for item in featured_case.cause %}
+                            <div class="timeline-item">{{ item }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mini-card">
+                        <div class="mini-card-title">改进建议</div>
+                        <div class="timeline" style="margin-top: 0.8rem;">
+                            {% for item in featured_case.advice %}
+                            <div class="timeline-item">{{ item }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <div class="card-list">
+        <section class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <div class="panel-title">相似案例检索</div>
+                    <div class="panel-subtitle">按事故类型、日期和关键词快速定位</div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="filter-bar" style="grid-template-columns: 1fr 1fr;">
+                    <input class="filter-input" placeholder="搜索案例名称、事故关键词">
+                    <select class="filter-select">
+                        <option>全部事故类型</option>
+                        <option>触电伤害</option>
+                        <option>短路跳闸</option>
+                        <option>高处坠落</option>
+                    </select>
+                </div>
+                <div class="card-list">
+                    {% for item in case_cards %}
+                    <article class="mini-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="mini-card-title">{{ item.title }}</div>
+                            {% if item.severity == "重大隐患" %}
+                            <span class="badge-soft red">{{ item.severity }}</span>
+                            {% elif item.severity == "较大" %}
+                            <span class="badge-soft amber">{{ item.severity }}</span>
+                            {% else %}
+                            <span class="badge-soft blue">{{ item.severity }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-chip">{{ item.tag }}</span>
+                            <span class="meta-chip">{{ item.date }}</span>
+                            {% for keyword in item.keywords %}
+                            <span class="meta-chip">{{ keyword }}</span>
+                            {% endfor %}
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <div class="panel-title">案例应用链路</div>
+                    <div class="panel-subtitle">一个案例可复用到多个功能模块</div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="timeline">
+                    <div class="timeline-item">案例进入问答上下文，回答时给出“类似事故提醒”</div>
+                    <div class="timeline-item">自动抽取整改建议，推送到隐患整改模块</div>
+                    <div class="timeline-item">从事故经过生成培训试题和班前会学习卡片</div>
+                    <div class="timeline-item">纳入统计看板，观察高频风险场景变化</div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

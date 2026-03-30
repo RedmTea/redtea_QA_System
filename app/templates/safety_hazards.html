@@ -1,0 +1,132 @@
+{% extends "safety_module_base.html" %}
+
+{% block title %}隐患排查与整改 - 电气作业安全智能问答系统{% endblock %}
+{% block header_title %}隐患排查与整改{% endblock %}
+{% block header_actions %}
+<button class="btn btn-primary">
+    <i class="bi bi-plus-circle"></i>
+    <span>新建隐患工单</span>
+</button>
+{% endblock %}
+
+{% block module_content %}
+<section class="module-hero">
+    <div class="hero-metrics" style="margin-top: 0;">
+        <div class="hero-metric">
+            <div class="metric-label">待整改</div>
+            <div class="metric-value">{{ summary.open }}</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">已逾期</div>
+            <div class="metric-value">{{ summary.overdue }}</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">已闭环</div>
+            <div class="metric-value">{{ summary.closed }}</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">高风险项</div>
+            <div class="metric-value">{{ summary.high_risk }}</div>
+        </div>
+    </div>
+</section>
+
+<div class="module-grid single-column">
+    <section class="panel-card">
+        <div class="panel-head">
+            <div>
+                <div class="panel-title">隐患台账</div>
+                <div class="panel-subtitle">围绕工单编号、责任人、整改期限、处理状态进行台账化管理。</div>
+            </div>
+            <div class="panel-tools">
+                <button class="action-btn primary"><i class="bi bi-plus-circle"></i> 新建隐患</button>
+                <button class="action-btn"><i class="bi bi-diagram-3"></i> 批量派发</button>
+                <button class="action-btn"><i class="bi bi-download"></i> 导出台账</button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="filter-bar" style="grid-template-columns: 1.3fr repeat(3, 0.8fr) auto;">
+                <input class="filter-input" placeholder="搜索隐患单号、标题、位置、责任人">
+                <select class="filter-select">
+                    <option>全部风险等级</option>
+                    <option>高风险</option>
+                    <option>中风险</option>
+                    <option>低风险</option>
+                </select>
+                <select class="filter-select">
+                    <option>全部状态</option>
+                    <option>待整改</option>
+                    <option>整改中</option>
+                    <option>待复查</option>
+                    <option>已逾期</option>
+                </select>
+                <select class="filter-select">
+                    <option>全部来源</option>
+                    <option>巡检发现</option>
+                    <option>专项检查</option>
+                    <option>现场抽查</option>
+                    <option>班组上报</option>
+                </select>
+                <button class="ghost-btn"><i class="bi bi-funnel"></i> 高级筛选</button>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>隐患单号</th>
+                        <th>隐患项</th>
+                        <th>位置</th>
+                        <th>风险等级</th>
+                        <th>责任人</th>
+                        <th>整改措施</th>
+                        <th>期限</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in hazards %}
+                    <tr>
+                        <td class="nowrap-cell">
+                            <div class="text-strong">{{ item.ticket_no }}</div>
+                            <div class="text-minor">{{ item.source }}</div>
+                        </td>
+                        <td>
+                            <div class="text-strong">{{ item.title }}</div>
+                        </td>
+                        <td>{{ item.location }}</td>
+                        <td>
+                            {% if item.level == "高风险" %}
+                            <span class="badge-soft red">{{ item.level }}</span>
+                            {% elif item.level == "中风险" %}
+                            <span class="badge-soft amber">{{ item.level }}</span>
+                            {% else %}
+                            <span class="badge-soft green">{{ item.level }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="nowrap-cell">{{ item.owner }}</td>
+                        <td>{{ item.measure }}</td>
+                        <td class="nowrap-cell">{{ item.deadline }}</td>
+                        <td>
+                            {% if item.status == "已逾期" %}
+                            <span class="badge-soft red">{{ item.status }}</span>
+                            {% elif item.status == "整改中" or item.status == "待整改" %}
+                            <span class="badge-soft amber">{{ item.status }}</span>
+                            {% else %}
+                            <span class="badge-soft blue">{{ item.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-btn"><i class="bi bi-eye"></i> 查看</button>
+                                <button class="action-btn primary"><i class="bi bi-pencil-square"></i> 跟进</button>
+                                <button class="action-btn warn"><i class="bi bi-check2-square"></i> 闭环</button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

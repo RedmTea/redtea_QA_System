@@ -1,0 +1,129 @@
+{% extends "safety_module_base.html" %}
+
+{% block title %}法规标准库 - 电气作业安全智能问答系统{% endblock %}
+{% block header_title %}电气安全法规标准库{% endblock %}
+{% block header_actions %}
+<a href="{{ url_for('safety.dashboard') }}" class="btn btn-outline-primary">
+    <i class="bi bi-bar-chart"></i>
+    <span>查看分析看板</span>
+</a>
+{% endblock %}
+
+{% block module_content %}
+<section class="module-hero">
+    <div class="hero-metrics" style="margin-top: 0;">
+        <div class="hero-metric">
+            <div class="metric-label">收录标准</div>
+            <div class="metric-value">126</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">待复核版本</div>
+            <div class="metric-value">12</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">高频引用条款</div>
+            <div class="metric-value">38</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">问答关联度</div>
+            <div class="metric-value">91%</div>
+        </div>
+    </div>
+</section>
+
+<div class="module-grid single-column">
+    <section class="panel-card">
+        <div class="panel-head">
+            <div>
+                <div class="panel-title">标准目录</div>
+                <div class="panel-subtitle">按标准编号、层级、状态进行统一维护，支持查看、编辑、删除等管理操作。</div>
+            </div>
+            <div class="panel-tools">
+                <button class="action-btn primary"><i class="bi bi-plus-circle"></i> 新增标准</button>
+                <button class="action-btn"><i class="bi bi-upload"></i> 批量导入</button>
+                <button class="action-btn"><i class="bi bi-download"></i> 导出目录</button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="filter-bar" style="grid-template-columns: 1.3fr repeat(3, 0.8fr) auto;">
+                <input class="filter-input" placeholder="搜索标准编号、标准名称、条款关键词">
+                <select class="filter-select">
+                    <option>全部标准层级</option>
+                    <option>国家标准</option>
+                    <option>行业标准</option>
+                    <option>企业制度</option>
+                </select>
+                <select class="filter-select">
+                    <option>全部状态</option>
+                    <option>现行有效</option>
+                    <option>重点推荐</option>
+                    <option>待复核</option>
+                </select>
+                <select class="filter-select">
+                    <option>全部责任部门</option>
+                    <option>安全监督部</option>
+                    <option>设备管理部</option>
+                    <option>运行检修中心</option>
+                </select>
+                <button class="ghost-btn"><i class="bi bi-funnel"></i> 高级筛选</button>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>标准编号</th>
+                        <th>标准名称</th>
+                        <th>层级</th>
+                        <th>责任人</th>
+                        <th>适用范围</th>
+                        <th>状态</th>
+                        <th>更新时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in standards %}
+                    <tr>
+                        <td class="nowrap-cell">
+                            <div class="text-strong">{{ item.code }}</div>
+                            <div class="text-minor">{{ item.version }}</div>
+                        </td>
+                        <td>
+                            <div class="text-strong">{{ item.name }}</div>
+                            <div class="meta-row">
+                                {% for keyword in item.keywords %}
+                                <span class="meta-chip">{{ keyword }}</span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td><span class="badge-soft blue">{{ item.level }}</span></td>
+                        <td class="nowrap-cell">
+                            <div class="text-strong">{{ item.owner }}</div>
+                            <div class="text-minor">{{ item.department }}</div>
+                        </td>
+                        <td>{{ item.scope }}</td>
+                        <td>
+                            {% if item.status == "现行有效" %}
+                            <span class="badge-soft green">{{ item.status }}</span>
+                            {% elif item.status == "重点推荐" %}
+                            <span class="badge-soft amber">{{ item.status }}</span>
+                            {% else %}
+                            <span class="badge-soft red">{{ item.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="nowrap-cell">{{ item.updated_at }}</td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-btn"><i class="bi bi-eye"></i> 查看</button>
+                                <button class="action-btn primary"><i class="bi bi-pencil-square"></i> 修改</button>
+                                <button class="action-btn danger"><i class="bi bi-trash3"></i> 删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

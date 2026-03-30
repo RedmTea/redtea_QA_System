@@ -1,0 +1,122 @@
+{% extends "safety_module_base.html" %}
+
+{% block title %}培训考试 - 电气作业安全智能问答系统{% endblock %}
+{% block header_title %}培训考试{% endblock %}
+{% block header_actions %}
+<button class="btn btn-primary">
+    <i class="bi bi-patch-question"></i>
+    <span>新建考试</span>
+</button>
+{% endblock %}
+
+{% block module_content %}
+<section class="module-hero">
+    <div class="hero-metrics" style="margin-top: 0;">
+        <div class="hero-metric">
+            <div class="metric-label">题库总量</div>
+            <div class="metric-value">{{ exam_stats.question_bank }}</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">进行中考试</div>
+            <div class="metric-value">{{ exam_stats.active_exams }}</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">通过率</div>
+            <div class="metric-value">{{ exam_stats.pass_rate }}</div>
+        </div>
+        <div class="hero-metric">
+            <div class="metric-label">错题待复训</div>
+            <div class="metric-value">{{ exam_stats.wrong_questions }}</div>
+        </div>
+    </div>
+</section>
+
+<div class="module-grid single-column">
+    <section class="panel-card">
+        <div class="panel-head">
+            <div>
+                <div class="panel-title">考试计划</div>
+                <div class="panel-subtitle">按考试模式、发布时间、负责人、参与人数进行计划管理和过程跟踪。</div>
+            </div>
+            <div class="panel-tools">
+                <button class="action-btn primary"><i class="bi bi-plus-circle"></i> 新建考试</button>
+                <button class="action-btn"><i class="bi bi-send"></i> 批量发布</button>
+                <button class="action-btn"><i class="bi bi-download"></i> 导出成绩</button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="filter-bar" style="grid-template-columns: 1.3fr repeat(3, 0.8fr) auto;">
+                <input class="filter-input" placeholder="搜索考试名称、对象、负责人">
+                <select class="filter-select">
+                    <option>全部模式</option>
+                    <option>固定试卷</option>
+                    <option>随机组卷</option>
+                    <option>案例闯关</option>
+                </select>
+                <select class="filter-select">
+                    <option>全部状态</option>
+                    <option>进行中</option>
+                    <option>待发布</option>
+                    <option>已完成</option>
+                </select>
+                <select class="filter-select">
+                    <option>全部对象</option>
+                    <option>新员工</option>
+                    <option>运行班组</option>
+                    <option>全员</option>
+                </select>
+                <button class="ghost-btn"><i class="bi bi-funnel"></i> 高级筛选</button>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>考试名称</th>
+                        <th>模式</th>
+                        <th>时长</th>
+                        <th>对象</th>
+                        <th>发布时间</th>
+                        <th>负责人</th>
+                        <th>参与人数</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in papers %}
+                    <tr>
+                        <td><div class="text-strong">{{ item.name }}</div></td>
+                        <td>{{ item.mode }}</td>
+                        <td class="nowrap-cell">{{ item.duration }}</td>
+                        <td>{{ item.audience }}</td>
+                        <td class="nowrap-cell">{{ item.publish_at }}</td>
+                        <td class="nowrap-cell">{{ item.manager }}</td>
+                        <td class="nowrap-cell">{{ item.participants }} 人</td>
+                        <td>
+                            {% if item.status == "进行中" %}
+                            <span class="badge-soft green">{{ item.status }}</span>
+                            {% elif item.status == "待发布" %}
+                            <span class="badge-soft amber">{{ item.status }}</span>
+                            {% else %}
+                            <span class="badge-soft slate">{{ item.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-btn"><i class="bi bi-eye"></i> 查看</button>
+                                <button class="action-btn primary"><i class="bi bi-pencil-square"></i> 编辑</button>
+                                {% if item.status == "待发布" %}
+                                <button class="action-btn warn"><i class="bi bi-send-check"></i> 发布</button>
+                                {% else %}
+                                <button class="action-btn"><i class="bi bi-bar-chart"></i> 统计</button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

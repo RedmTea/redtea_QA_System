@@ -33,7 +33,15 @@ def create_app(config_class=Config):
     def inject_user():
         return dict(current_user=get_current_user())
 
-    from app.blueprints import auth, knowledgebase, knowledgegraph, settings, document, chat
+    from app.blueprints import (
+        auth,
+        knowledgebase,
+        knowledgegraph,
+        settings,
+        document,
+        chat,
+        safety,
+    )
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(knowledgebase.bp)
@@ -41,6 +49,7 @@ def create_app(config_class=Config):
     app.register_blueprint(settings.bp)
     app.register_blueprint(document.bp)
     app.register_blueprint(chat.bp)
+    app.register_blueprint(safety.bp)
     # 从给定的配置类中加载配置信息到应用,比如Config.SECRET_KEY配置项就传递给了flask app
     # 密钥用来实现会话的时候用到 我们在node课中讲手写express的时候详细讲解了session的原理，以及session中密钥的用途
     app.config.from_object(config_class)
